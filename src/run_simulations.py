@@ -34,7 +34,7 @@ def fetch_current_slate():
         "regions": "eu",
         "bookmakers": "pinnacle",
         "markets": "spreads,h2h",
-        "oddsFormat": "decimal", # Explicitly declare decimal format for accurate math
+        "oddsFormat": "decimal",
         "commenceTimeFrom": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "commenceTimeTo": end_date.strftime("%Y-%m-%dT%H:%M:%SZ")
     }
@@ -89,11 +89,10 @@ def run_monte_carlo_simulations(games_data, power_ratings, league_avg_score):
             continue
             
         pinnacle_away_spread = 0.0
-        pinnacle_away_price = 1.909 # Default -110 decimal
+        pinnacle_away_price = 1.909 
         pinnacle_home_spread = 0.0
-        pinnacle_home_price = 1.909 # Default -110 decimal
+        pinnacle_home_price = 1.909 
         
-        # Explicitly grab BOTH prices to fix the home edge math
         for bookmaker in game.get('bookmakers', []):
             if bookmaker.get('key') == 'pinnacle':
                 for market in bookmaker.get('markets', []):
@@ -134,10 +133,11 @@ def run_monte_carlo_simulations(games_data, power_ratings, league_avg_score):
             win_prob = model_home_cover_prob
             odds_dec = pinnacle_home_price
 
-        # True EV Math: (Probability * Decimal Odds) - 1
+        # True EV Math
         ev_percent = (win_prob * odds_dec - 1.0) * 100
 
         slate_projections.append({
+            "id": game.get('id'),
             "commence_time": game.get('commence_time'),
             "away_team": away_name,
             "home_team": home_name,
@@ -147,6 +147,7 @@ def run_monte_carlo_simulations(games_data, power_ratings, league_avg_score):
             "target_team": target_team,
             "target_side": target_side,
             "target_line": target_line,
+            "odds_dec": odds_dec,
             "recommended_bet": f"{target_team} {target_line}",
             "ev": round(ev_percent, 1)
         })
@@ -158,7 +159,36 @@ def save_to_dashboard(slate_projections):
     file_path = 'data/upcoming_slate.json'
     with open(file_path, 'w') as f:
         json.dump(slate_projections, f, indent=4)
-    print(f"Saved {len(slate_projections)} simulations to {file_path}")
+        
+    log_file = 'data/historical_log.csv'
+    bets_to_log = [p for p in slate_projections if p['ev'] > 0]
+    
+    if bets_to_log:
+        new_rows = []
+        for p in bets_to_log:
+            new_rows.append({
+                'game_id': p['id'],
+                'commence_time': p['commence_time'],
+                'target_team': p['target_team'],
+                'target_line': p['target_line'],
+                'odds_decimal': p['odds_dec'],
+                'stake': 25.0, # Flat $25 unit size
+                'ev': p['ev'],
+                'status': 'Pending',
+                'profit_loss': 0.0
+            })
+        df_new = pd.DataFrame(new_rows)
+        
+        if os.path.exists(log_file):
+            df_existing = pd.read_csv(log_file)
+            existing_ids = df_existing['game_id'].tolist()
+            df_new = df_new[~df_new['game_id'].isin(existing_ids)]
+            if not df_new.empty:
+                pd.concat([df_existing, df_new], ignore_index=True).to_csv(log_file, index=False)
+        else:
+            df_new.to_csv(log_file, index=False)
+            
+    print(f"Saved {len(slate_projections)} simulations and logged new bets.")
 
 if __name__ == "__main__":
     power_ratings, league_avg = calculate_team_power_ratings()
