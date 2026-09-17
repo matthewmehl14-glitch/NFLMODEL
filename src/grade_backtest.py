@@ -1,3 +1,5 @@
+# src/grade_backtest.py
+
 import os
 import requests
 import pandas as pd
@@ -5,11 +7,24 @@ import json
 
 def grade_bets():
     csv_file = 'data/historical_log.csv'
-    if not os.path.exists(csv_file):
-        print("No historical log found. Skipping grading.")
+    
+    if not os.path.exists(csv_file) or os.path.getsize(csv_file) == 0:
+        print("No historical log found or file is empty. Skipping grading.")
+        update_roi_dashboard(pd.DataFrame())
         return
         
-    df = pd.read_csv(csv_file)
+    try:
+        df = pd.read_csv(csv_file)
+    except pd.errors.EmptyDataError:
+        print("CSV is empty despite size check. Skipping grading.")
+        update_roi_dashboard(pd.DataFrame())
+        return
+
+    if df.empty or 'status' not in df.columns:
+        print("No valid bet columns. Skipping grading.")
+        update_roi_dashboard(df)
+        return
+
     pending_mask = df['status'] == 'Pending'
     if not pending_mask.any():
         print("No pending bets to grade.")
@@ -69,28 +84,32 @@ def grade_bets():
     update_roi_dashboard(df)
 
 def update_roi_dashboard(df):
-    graded = df[df['status'].isin(['Win', 'Loss', 'Push'])]
-    total_bets = len(graded)
-    
-    if total_bets == 0:
+    if df.empty or 'status' not in df.columns:
         stats = {"total_bets": 0, "wins": 0, "losses": 0, "pushes": 0, "roi": 0.0, "profit": 0.0}
     else:
-        wins = len(graded[graded['status'] == 'Win'])
-        losses = len(graded[graded['status'] == 'Loss'])
-        pushes = len(graded[graded['status'] == 'Push'])
-        total_profit = graded['profit_loss'].sum()
-        total_staked = graded['stake'].sum()
-        roi = (total_profit / total_staked) * 100 if total_staked > 0 else 0.0
+        graded = df[df['status'].isin(['Win', 'Loss', 'Push'])]
+        total_bets = len(graded)
         
-        stats = {
-            "total_bets": total_bets,
-            "wins": wins,
-            "losses": losses,
-            "pushes": pushes,
-            "roi": round(roi, 2),
-            "profit": round(total_profit, 2)
-        }
+        if total_bets == 0:
+            stats = {"total_bets": 0, "wins": 0, "losses": 0, "pushes": 0, "roi": 0.0, "profit": 0.0}
+        else:
+            wins = len(graded[graded['status'] == 'Win'])
+            losses = len(graded[graded['status'] == 'Loss'])
+            pushes = len(graded[graded['status'] == 'Push'])
+            total_profit = graded['profit_loss'].sum()
+            total_staked = graded['stake'].sum()
+            roi = (total_profit / total_staked) * 100 if total_staked > 0 else 0.0
+            
+            stats = {
+                "total_bets": total_bets,
+                "wins": wins,
+                "losses": losses,
+                "pushes": pushes,
+                "roi": round(roi, 2),
+                "profit": round(total_profit, 2)
+            }
         
+    os.makedirs('data', exist_ok=True)
     with open('data/roi_stats.json', 'w') as f:
         json.dump(stats, f)
 
