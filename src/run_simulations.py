@@ -1,5 +1,3 @@
-# src/run_simulations.py
-
 import os
 import json
 import requests
@@ -92,7 +90,11 @@ def calculate_advanced_metrics():
 def run_monte_carlo_simulations(games_data, team_metrics, league_avg_points):
     slate_projections = []
     iterations = 10000
-    cov_factor = 2.0 
+    
+    # NFL games have high variance; standard deviation for a team's score is roughly 10 points.
+    std_dev_nfl = 10.0 
+    # Regression factor to stabilize noisy early-season EPA data
+    regression_factor = 0.5 
     
     for game in games_data:
         home_name = game.get('home_team')
@@ -123,21 +125,16 @@ def run_monte_carlo_simulations(games_data, team_metrics, league_avg_points):
         home_plays = (team_metrics[home_abbr]['pace'] + team_metrics[away_abbr]['pace']) / 2
         away_plays = home_plays 
 
-        exp_home_score = league_avg_points + (team_metrics[home_abbr]['off_epa_edge'] - team_metrics[away_abbr]['def_epa_edge']) * home_plays + 1.5
-        exp_away_score = league_avg_points + (team_metrics[away_abbr]['off_epa_edge'] - team_metrics[home_abbr]['def_epa_edge']) * away_plays
+        # Apply the regression factor to the EPA edge to tame the projections
+        exp_home_score = league_avg_points + ((team_metrics[home_abbr]['off_epa_edge'] - team_metrics[away_abbr]['def_epa_edge']) * home_plays * regression_factor) + 1.5
+        exp_away_score = league_avg_points + ((team_metrics[away_abbr]['off_epa_edge'] - team_metrics[home_abbr]['def_epa_edge']) * away_plays * regression_factor)
         
         exp_home_score = max(exp_home_score, 0.1)
         exp_away_score = max(exp_away_score, 0.1)
 
-        lam_home = max(exp_home_score - cov_factor, 0.1)
-        lam_away = max(exp_away_score - cov_factor, 0.1)
-        
-        z_home = np.random.poisson(lam_home, iterations)
-        z_away = np.random.poisson(lam_away, iterations)
-        z_shared = np.random.poisson(cov_factor, iterations)
-        
-        sim_home_scores = z_home + z_shared
-        sim_away_scores = z_away + z_shared
+        # Revert to a Normal Distribution to properly capture NFL score variance
+        sim_home_scores = np.random.normal(exp_home_score, std_dev_nfl, iterations)
+        sim_away_scores = np.random.normal(exp_away_score, std_dev_nfl, iterations)
         
         away_covers = np.sum((sim_away_scores + pinnacle_away_spread) > sim_home_scores)
         home_covers = np.sum((sim_home_scores + pinnacle_home_spread) > sim_away_scores)
