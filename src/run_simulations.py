@@ -44,40 +44,66 @@ def fetch_current_slate():
         raise Exception(f"Odds API returned an error: {response.text}")
     return response.json()
 
-def calculate_team_power_ratings():
+def calculate_advanced_metrics():
+    """
+    Downloads raw Play-by-Play data to calculate EPA/play and Pace,
+    creating a highly responsive power rating based on per-play efficiency.
+    """
+    print("Downloading NFLverse play-by-play database (this takes a minute)...")
     current_year = datetime.now().year
-    schedule = nfl.import_schedules([current_year - 1, current_year])
-    completed_games = schedule[schedule['away_score'].notna()].copy()
+    years_to_pull = [current_year - 1, current_year]
     
-    team_stats = {}
-    teams = pd.concat([completed_games['home_team'], completed_games['away_team']]).unique()
-    league_avg_score = (completed_games['home_score'].mean() + completed_games['away_score'].mean()) / 2
+    # Load PBP data
+    pbp = nfl.import_pbp_data(years_to_pull)
+    
+    # Filter out penalties/kneeldowns to isolate pure offensive/defensive output
+    plays = pbp[(pbp['play_type'].isin(['pass', 'run'])) & (pbp['epa'].notna())].copy()
+    
+    # Calculate League Baseline
+    league_epa_per_play = plays['epa'].mean()
+    
+    # Offensive EPA and Pace
+    off_stats = plays.groupby('posteam').agg(
+        off_epa_per_play=('epa', 'mean'),
+        total_plays=('play_id', 'count'),
+        games_played=('game_id', 'nunique')
+    ).reset_index()
+    off_stats['off_plays_per_game'] = off_stats['total_plays'] / off_stats['games_played']
+    
+    # Defensive EPA and Pace
+    def_games = plays.groupby('defteam')['game_id'].nunique()
+    def_stats = plays.groupby('defteam').agg(
+        def_epa_per_play=('epa', 'mean'),
+        total_def_plays=('play_id', 'count')
+    ).reset_index()
+    def_stats['def_plays_per_game'] = def_stats['total_def_plays'] / def_stats['defteam'].map(def_games)
 
-    for team in teams:
-        home_games = completed_games[completed_games['home_team'] == team]
-        away_games = completed_games[completed_games['away_team'] == team]
-        total_games = len(home_games) + len(away_games)
+    # Establish baseline points per game from schedules
+    scores = nfl.import_schedules(years_to_pull)
+    completed = scores[scores['away_score'].notna()].copy()
+    league_avg_points = (completed['home_score'].mean() + completed['away_score'].mean()) / 2
+
+    team_metrics = {}
+    teams = off_stats['posteam'].unique()
+    
+    for t in teams:
+        off = off_stats[off_stats['posteam'] == t].iloc[0]
+        defense = def_stats[def_stats['defteam'] == t].iloc[0]
         
-        if total_games == 0:
-            continue
-            
-        points_scored = home_games['home_score'].sum() + away_games['away_score'].sum()
-        points_allowed = home_games['away_score'].sum() + away_games['home_score'].sum()
-        
-        avg_scored = points_scored / total_games
-        avg_allowed = points_allowed / total_games
-        
-        team_stats[team] = {
-            'offense_rating': avg_scored / league_avg_score if league_avg_score > 0 else 1.0,
-            'defense_rating': avg_allowed / league_avg_score if league_avg_score > 0 else 1.0
+        team_metrics[t] = {
+            'off_epa_edge': off['off_epa_per_play'] - league_epa_per_play,
+            'def_epa_edge': defense['def_epa_per_play'] - league_epa_per_play, # Negative is better
+            'pace': (off['off_plays_per_game'] + defense['def_plays_per_game']) / 2
         }
         
-    return team_stats, league_avg_score
+    return team_metrics, league_avg_points
 
-def run_monte_carlo_simulations(games_data, power_ratings, league_avg_score):
+def run_monte_carlo_simulations(games_data, team_metrics, league_avg_points):
     slate_projections = []
     iterations = 10000
-    std_dev_nfl_score = 10.0 
+    
+    # Covariance factor for the Bivariate Poisson (shared game environment variance)
+    cov_factor = 2.0 
     
     for game in games_data:
         home_name = game.get('home_team')
@@ -85,7 +111,7 @@ def run_monte_carlo_simulations(games_data, power_ratings, league_avg_score):
         home_abbr = TEAM_MAPPING.get(home_name)
         away_abbr = TEAM_MAPPING.get(away_name)
         
-        if not home_abbr or not away_abbr or home_abbr not in power_ratings or away_abbr not in power_ratings:
+        if not home_abbr or not away_abbr or home_abbr not in team_metrics or away_abbr not in team_metrics:
             continue
             
         pinnacle_away_spread = 0.0
@@ -105,21 +131,44 @@ def run_monte_carlo_simulations(games_data, power_ratings, league_avg_score):
                                 pinnacle_home_spread = float(outcome.get('point', 0))
                                 pinnacle_home_price = float(outcome.get('price', 1.909))
 
-        # Expected Matchup Scores
-        exp_home_score = (power_ratings[home_abbr]['offense_rating'] * power_ratings[away_abbr]['defense_rating'] * league_avg_score) + 1.5
-        exp_away_score = (power_ratings[away_abbr]['offense_rating'] * power_ratings[home_abbr]['defense_rating'] * league_avg_score)
+        # ---------------------------------------------------------
+        # TRUE EXPECTED POINTS VIA EPA/PLAY SCALED BY PACE
+        # ---------------------------------------------------------
+        # Expected points = Baseline + (Offensive Edge - Defensive Edge) * Expected Plays
+        home_plays = (team_metrics[home_abbr]['pace'] + team_metrics[away_abbr]['pace']) / 2
+        away_plays = home_plays # Assume neutral pace blending
 
-        # Simulation Arrays
-        sim_home_scores = np.random.normal(exp_home_score, std_dev_nfl_score, iterations)
-        sim_away_scores = np.random.normal(exp_away_score, std_dev_nfl_score, iterations)
+        exp_home_score = league_avg_points + (team_metrics[home_abbr]['off_epa_edge'] - team_metrics[away_abbr]['def_epa_edge']) * home_plays + 1.5
+        exp_away_score = league_avg_points + (team_metrics[away_abbr]['off_epa_edge'] - team_metrics[home_abbr]['def_epa_edge']) * away_plays
         
+        # Prevent negative lambdas in edge cases
+        exp_home_score = max(exp_home_score, 0.1)
+        exp_away_score = max(exp_away_score, 0.1)
+
+        # ---------------------------------------------------------
+        # BIVARIATE POISSON SIMULATION ARRAY
+        # ---------------------------------------------------------
+        # Subtract the shared covariance to build the independent lambdas
+        lam_home = max(exp_home_score - cov_factor, 0.1)
+        lam_away = max(exp_away_score - cov_factor, 0.1)
+        
+        # Generate random discrete arrays
+        z_home = np.random.poisson(lam_home, iterations)
+        z_away = np.random.poisson(lam_away, iterations)
+        z_shared = np.random.poisson(cov_factor, iterations)
+        
+        sim_home_scores = z_home + z_shared
+        sim_away_scores = z_away + z_shared
+        
+        # ---------------------------------------------------------
+        # MARKET PROBABILITY GRADING
+        # ---------------------------------------------------------
         away_covers = np.sum((sim_away_scores + pinnacle_away_spread) > sim_home_scores)
         home_covers = np.sum((sim_home_scores + pinnacle_home_spread) > sim_away_scores)
         
         model_away_cover_prob = away_covers / iterations
         model_home_cover_prob = home_covers / iterations
 
-        # Target Identification
         if model_away_cover_prob > model_home_cover_prob:
             target_team = away_name
             target_side = "AWAY"
@@ -133,7 +182,6 @@ def run_monte_carlo_simulations(games_data, power_ratings, league_avg_score):
             win_prob = model_home_cover_prob
             odds_dec = pinnacle_home_price
 
-        # True EV Math
         ev_percent = (win_prob * odds_dec - 1.0) * 100
 
         slate_projections.append({
@@ -172,7 +220,7 @@ def save_to_dashboard(slate_projections):
                 'target_team': p['target_team'],
                 'target_line': p['target_line'],
                 'odds_decimal': p['odds_dec'],
-                'stake': 25.0, # Flat $25 unit size
+                'stake': 25.0, 
                 'ev': p['ev'],
                 'status': 'Pending',
                 'profit_loss': 0.0
@@ -191,7 +239,7 @@ def save_to_dashboard(slate_projections):
     print(f"Saved {len(slate_projections)} simulations and logged new bets.")
 
 if __name__ == "__main__":
-    power_ratings, league_avg = calculate_team_power_ratings()
+    team_metrics, league_avg = calculate_advanced_metrics()
     raw_games = fetch_current_slate()
-    projections = run_monte_carlo_simulations(raw_games, power_ratings, league_avg)
+    projections = run_monte_carlo_simulations(raw_games, team_metrics, league_avg)
     save_to_dashboard(projections)
