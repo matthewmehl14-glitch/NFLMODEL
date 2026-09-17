@@ -1,0 +1,162 @@
+[
+    {
+        "commence_time": "2026-09-18T00:15:00Z",
+        "away_team": "Detroit Lions",
+        "home_team": "Buffalo Bills",
+        "model_away_prob": 55.5,
+        "model_home_prob": 44.5,
+        "pinnacle_spread": "+5.5",
+        "edge": 3.0,
+        "ev": 5.4
+    },
+    {
+        "commence_time": "2026-09-20T17:00:00Z",
+        "away_team": "Carolina Panthers",
+        "home_team": "Atlanta Falcons",
+        "model_away_prob": 49.4,
+        "model_home_prob": 50.6,
+        "pinnacle_spread": "-2.5",
+        "edge": 2.2,
+        "ev": 11.3
+    },
+    {
+        "commence_time": "2026-09-20T17:00:00Z",
+        "away_team": "New Orleans Saints",
+        "home_team": "Baltimore Ravens",
+        "model_away_prob": 40.8,
+        "model_home_prob": 59.2,
+        "pinnacle_spread": "+9.0",
+        "edge": 3.2,
+        "ev": 9.8
+    },
+    {
+        "commence_time": "2026-09-20T17:00:00Z",
+        "away_team": "Minnesota Vikings",
+        "home_team": "Chicago Bears",
+        "model_away_prob": 53.0,
+        "model_home_prob": 47.0,
+        "pinnacle_spread": "+5.5",
+        "edge": 2.0,
+        "ev": 0.6
+    },
+    {
+        "commence_time": "2026-09-20T17:00:00Z",
+        "away_team": "Cincinnati Bengals",
+        "home_team": "Houston Texans",
+        "model_away_prob": 57.0,
+        "model_home_prob": 43.0,
+        "pinnacle_spread": "+3.0",
+        "edge": 1.7,
+        "ev": 1.8
+    },
+    {
+        "commence_time": "2026-09-20T17:00:00Z",
+        "away_team": "Cleveland Browns",
+        "home_team": "Tampa Bay Buccaneers",
+        "model_away_prob": 50.0,
+        "model_home_prob": 50.0,
+        "pinnacle_spread": "+9.0",
+        "edge": 0.6,
+        "ev": 4.6
+    },
+    {
+        "commence_time": "2026-09-20T17:00:00Z",
+        "away_team": "Green Bay Packers",
+        "home_team": "New York Jets",
+        "model_away_prob": 58.5,
+        "model_home_prob": 41.5,
+        "pinnacle_spread": "-3.0",
+        "edge": -1.6,
+        "ev": 10.3
+    },
+    {
+        "commence_time": "2026-09-20T17:00:00Z",
+        "away_team": "Pittsburgh Steelers",
+        "home_team": "New England Patriots",
+        "model_away_prob": 51.4,
+        "model_home_prob": 48.6,
+        "pinnacle_spread": "+5.5",
+        "edge": 3.4,
+        "ev": 11.4
+    },
+    {
+        "commence_time": "2026-09-20T17:00:00Z",
+        "away_team": "Philadelphia Eagles",
+        "home_team": "Tennessee Titans",
+        "model_away_prob": 35.4,
+        "model_home_prob": 64.6,
+        "pinnacle_spread": "-7.5",
+        "edge": -0.7,
+        "ev": 8.6
+    },
+    {
+        "commence_time": "2026-09-20T20:05:00Z",
+        "away_team": "Jacksonville Jaguars",
+        "home_team": "Denver Broncos",
+        "model_away_prob": 51.7,
+        "model_home_prob": 48.3,
+        "pinnacle_spread": "+2.5",
+        "edge": -3.1,
+        "ev": 4.6
+    },
+    {
+        "commence_time": "2026-09-20T20:05:00Z",
+        "away_team": "Las Vegas Raiders",
+        "home_team": "Los Angeles Chargers",
+        "model_away_prob": 44.6,
+        "model_home_prob": 55.4,
+        "pinnacle_spread": "+6.5",
+        "edge": 0.9,
+        "ev": 3.8
+    },
+    {
+        "commence_time": "2026-09-20T20:25:00Z",
+        "away_team": "Seattle Seahawks",
+        "home_team": "Arizona Cardinals",
+        "model_away_prob": 39.2,
+        "model_home_prob": 60.8,
+        "pinnacle_spread": "-4.0",
+        "edge": -1.5,
+        "ev": -1.5
+    },
+    {
+        "commence_time": "2026-09-20T20:25:00Z",
+        "away_team": "Washington Commanders",
+        "home_team": "Dallas Cowboys",
+        "model_away_prob": 43.2,
+        "model_home_prob": 56.8,
+        "pinnacle_spread": "+4.0",
+        "edge": -1.6,
+        "ev": -3.2
+    },
+    {
+        "commence_time": "2026-09-20T20:25:00Z",
+        "away_team": "Miami Dolphins",
+        "home_team": "San Francisco 49ers",
+        "model_away_prob": 52.2,
+        "model_home_prob": 47.8,
+        "pinnacle_spread": "+13.5",
+        "edge": 0.9,
+        "ev": 4.8
+    },
+    {
+        "commence_time": "2026-09-21T00:20:00Z",
+        "away_team": "Indianapolis Colts",
+        "home_team": "Kansas City Chiefs",
+        "model_away_prob": 49.5,
+        "model_home_prob": 50.5,
+        "pinnacle_spread": "+7.0",
+        "edge": 3.2,
+        "ev": -2.8
+    },
+    {
+        "commence_time": "2026-09-22T00:15:00Z",
+        "away_team": "New York Giants",
+        "home_team": "Los Angeles Rams",
+        "model_away_prob": 41.5,
+        "model_home_prob": 58.5,
+        "pinnacle_spread": "+7.0",
+        "edge": 2.7,
+        "ev": -4.1
+    }
+]
