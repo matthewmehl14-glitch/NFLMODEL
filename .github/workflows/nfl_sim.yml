@@ -1,0 +1,37 @@
+name: NFL EV Automation
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Runs every 6 hours
+  workflow_dispatch: # Gives you a manual "Run" button in GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  run-simulations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Packages
+        run: pip install -r requirements.txt
+
+      - name: Run Simulation Script
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: python src/run_simulations.py
+
+      - name: Save Updated Data
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Automated EV update" || echo "No changes"
+          git push
