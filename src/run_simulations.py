@@ -34,6 +34,7 @@ def fetch_current_slate():
         "regions": "eu",
         "bookmakers": "pinnacle",
         "markets": "spreads,h2h",
+        "oddsFormat": "decimal", # Explicitly declare decimal format for accurate math
         "commenceTimeFrom": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "commenceTimeTo": end_date.strftime("%Y-%m-%dT%H:%M:%SZ")
     }
@@ -73,13 +74,6 @@ def calculate_team_power_ratings():
         
     return team_stats, league_avg_score
 
-def american_to_decimal(american_odds):
-    if american_odds > 0:
-        return (american_odds / 100.0) + 1.0
-    elif american_odds < 0:
-        return (100.0 / abs(american_odds)) + 1.0
-    return 1.909 
-
 def run_monte_carlo_simulations(games_data, power_ratings, league_avg_score):
     slate_projections = []
     iterations = 10000
@@ -95,9 +89,11 @@ def run_monte_carlo_simulations(games_data, power_ratings, league_avg_score):
             continue
             
         pinnacle_away_spread = 0.0
-        pinnacle_away_price = -110
+        pinnacle_away_price = 1.909 # Default -110 decimal
         pinnacle_home_spread = 0.0
+        pinnacle_home_price = 1.909 # Default -110 decimal
         
+        # Explicitly grab BOTH prices to fix the home edge math
         for bookmaker in game.get('bookmakers', []):
             if bookmaker.get('key') == 'pinnacle':
                 for market in bookmaker.get('markets', []):
@@ -105,9 +101,10 @@ def run_monte_carlo_simulations(games_data, power_ratings, league_avg_score):
                         for outcome in market.get('outcomes', []):
                             if outcome.get('name') == away_name:
                                 pinnacle_away_spread = float(outcome.get('point', 0))
-                                pinnacle_away_price = float(outcome.get('price', -110))
+                                pinnacle_away_price = float(outcome.get('price', 1.909))
                             elif outcome.get('name') == home_name:
                                 pinnacle_home_spread = float(outcome.get('point', 0))
+                                pinnacle_home_price = float(outcome.get('price', 1.909))
 
         # Expected Matchup Scores
         exp_home_score = (power_ratings[home_abbr]['offense_rating'] * power_ratings[away_abbr]['defense_rating'] * league_avg_score) + 1.5
@@ -129,16 +126,15 @@ def run_monte_carlo_simulations(games_data, power_ratings, league_avg_score):
             target_side = "AWAY"
             target_line = f"{pinnacle_away_spread:+g}"
             win_prob = model_away_cover_prob
-            odds_dec = american_to_decimal(pinnacle_away_price)
+            odds_dec = pinnacle_away_price
         else:
             target_team = home_name
             target_side = "HOME"
             target_line = f"{pinnacle_home_spread:+g}"
             win_prob = model_home_cover_prob
-            odds_dec = american_to_decimal(-110 if pinnacle_away_price == -110 else (pinnacle_away_price * -1))
+            odds_dec = pinnacle_home_price
 
-        # EV Math
-        implied_prob = 1.0 / odds_dec
+        # True EV Math: (Probability * Decimal Odds) - 1
         ev_percent = (win_prob * odds_dec - 1.0) * 100
 
         slate_projections.append({
