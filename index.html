@@ -8,7 +8,8 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
   <div class="max-w-6xl mx-auto px-4 py-8">
-    <!-- Header -->
+    
+    <!-- Top Header -->
     <header class="border-b border-slate-800 pb-6 mb-8 flex justify-between items-center">
       <div>
         <h1 class="text-3xl font-black tracking-tight text-white">
@@ -18,19 +19,20 @@
       </div>
       <div class="flex items-center space-x-2">
         <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="text-xs font-medium text-emerald-400">Model Active</span>
+        <span class="text-xs font-medium text-emerald-400 uppercase tracking-wider">Model Active</span>
       </div>
     </header>
 
-    <!-- Slate Grid -->
+    <!-- Games Grid Header -->
     <main>
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-lg font-bold uppercase tracking-wider text-slate-200">Upcoming Slate Projections</h2>
-        <span id="game-count" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full border border-slate-700">Loading games...</span>
+        <h2 class="text-lg font-bold uppercase tracking-wider text-slate-200">Current Week Slate</h2>
+        <span id="game-count" class="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">Loading games...</span>
       </div>
 
-      <div id="games-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Game cards load here -->
+      <!-- Container -->
+      <div id="games-container" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- Cards will render dynamically -->
       </div>
     </main>
   </div>
@@ -39,47 +41,107 @@
     async function loadSlate() {
       const container = document.getElementById('games-container');
       const countBadge = document.getElementById('game-count');
+
       try {
         const res = await fetch('data/upcoming_slate.json');
-        if (!res.ok) throw new Error('No data file found yet');
+        if (!res.ok) throw new Error('Data file not available yet');
         const games = await res.json();
         
-        countBadge.innerText = `${games.length} Games Scheduled`;
-        container.innerHTML = games.map(game => `
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-5 shadow-lg relative overflow-hidden">
-            <div class="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-red-600 via-slate-700 to-blue-600"></div>
-            <div class="flex justify-between items-center mb-4">
-              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">${new Date(game.commence_time).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
-              <span class="text-xs font-bold px-2 py-0.5 rounded ${game.ev > 0 ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-rose-950 text-rose-400 border border-rose-800'}">
-                ${game.ev > 0 ? '+' : ''}${game.ev}% EV
-              </span>
+        countBadge.innerText = `${games.length} Games Available`;
+
+        if (games.length === 0) {
+          container.innerHTML = `
+            <div class="col-span-full border border-dashed border-slate-800 rounded-lg p-8 text-center text-slate-500">
+              <p class="text-sm font-medium text-slate-400">No games currently scheduled within the 5-day window.</p>
             </div>
-            <div class="space-y-3">
-              <div class="flex justify-between items-center bg-slate-950/60 p-2.5 rounded border border-slate-800/80">
-                <span class="font-bold text-red-400">${game.away_team}</span>
-                <span class="text-xs font-mono bg-slate-800 px-2 py-1 rounded text-slate-300">Model: ${game.model_away_prob}%</span>
+          `;
+          return;
+        }
+
+        container.innerHTML = games.map(game => {
+          const isAwayTarget = game.target_team === game.away_team;
+          const isHomeTarget = game.target_team === game.home_team;
+
+          return `
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg relative flex flex-col justify-between overflow-hidden">
+              <div class="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-red-600 via-slate-700 to-blue-600"></div>
+              
+              <!-- Card Header -->
+              <div>
+                <div class="flex justify-between items-center mb-4">
+                  <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    ${new Date(game.commence_time).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                  <span class="text-[11px] font-mono text-slate-400">
+                    Pinnacle: <strong class="text-slate-200">${game.pinnacle_away_line || 'Spread Open'}</strong>
+                  </span>
+                </div>
+
+                <!-- Matchup Rows -->
+                <div class="space-y-2.5 mb-5">
+                  <!-- Away Team Row -->
+                  <div class="flex justify-between items-center p-3 rounded-lg border transition-all ${
+                    isAwayTarget
+                      ? 'bg-red-950/40 border-red-500/70 shadow-inner'
+                      : 'bg-slate-950/60 border-slate-800/80'
+                  }">
+                    <div class="flex items-center space-x-2.5">
+                      <span class="w-2.5 h-2.5 rounded-full ${isAwayTarget ? 'bg-red-500 ring-4 ring-red-500/20' : 'bg-transparent'}"></span>
+                      <span class="font-bold text-red-400 text-sm tracking-wide">${game.away_team}</span>
+                      ${isAwayTarget ? '<span class="text-[10px] uppercase font-bold bg-red-900/60 text-red-200 px-1.5 py-0.5 rounded">Value Side</span>' : ''}
+                    </div>
+                    <span class="text-xs font-mono bg-slate-800/90 px-2.5 py-1 rounded text-slate-300">Model: ${game.model_away_prob}%</span>
+                  </div>
+
+                  <!-- Home Team Row -->
+                  <div class="flex justify-between items-center p-3 rounded-lg border transition-all ${
+                    isHomeTarget
+                      ? 'bg-blue-950/40 border-blue-500/70 shadow-inner'
+                      : 'bg-slate-950/60 border-slate-800/80'
+                  }">
+                    <div class="flex items-center space-x-2.5">
+                      <span class="w-2.5 h-2.5 rounded-full ${isHomeTarget ? 'bg-blue-500 ring-4 ring-blue-500/20' : 'bg-transparent'}"></span>
+                      <span class="font-bold text-blue-400 text-sm tracking-wide">${game.home_team}</span>
+                      ${isHomeTarget ? '<span class="text-[10px] uppercase font-bold bg-blue-900/60 text-blue-200 px-1.5 py-0.5 rounded">Value Side</span>' : ''}
+                    </div>
+                    <span class="text-xs font-mono bg-slate-800/90 px-2.5 py-1 rounded text-slate-300">Model: ${game.model_home_prob}%</span>
+                  </div>
+                </div>
               </div>
-              <div class="flex justify-between items-center bg-slate-950/60 p-2.5 rounded border border-slate-800/80">
-                <span class="font-bold text-blue-400">${game.home_team}</span>
-                <span class="text-xs font-mono bg-slate-800 px-2 py-1 rounded text-slate-300">Model: ${game.model_home_prob}%</span>
+
+              <!-- Actionable Recommendation Footer -->
+              <div class="pt-3 border-t border-slate-800/80 bg-slate-950/70 -mx-5 -mb-5 p-4 rounded-b-xl flex items-center justify-between">
+                <div>
+                  <div class="text-[10px] uppercase font-bold tracking-wider text-slate-500">Recommended Play</div>
+                  <div class="text-base font-black text-emerald-400 font-mono tracking-tight flex items-center gap-1.5 mt-0.5">
+                    <span>⚡</span> ${game.recommended_bet}
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-[10px] uppercase font-bold tracking-wider text-slate-500">Model Edge</div>
+                  <span class="inline-block mt-0.5 text-xs font-mono font-bold px-2 py-0.5 rounded ${
+                    game.ev > 0 
+                      ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' 
+                      : 'bg-rose-950 text-rose-400 border border-rose-800'
+                  }">
+                    +${game.ev}% EV (${game.edge_pts} pts)
+                  </span>
+                </div>
               </div>
             </div>
-            <div class="mt-4 pt-3 border-t border-slate-800/80 flex justify-between text-xs text-slate-400">
-              <span>Pinnacle Line: <strong class="text-slate-200">${game.pinnacle_spread || 'N/A'}</strong></span>
-              <span>Edge: <strong class="${game.edge > 0 ? 'text-emerald-400' : 'text-slate-400'}">${game.edge || '0.0'} pts</strong></span>
-            </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       } catch (err) {
         countBadge.innerText = '0 Games Loaded';
         container.innerHTML = `
           <div class="col-span-full border border-dashed border-slate-800 rounded-lg p-8 text-center text-slate-500">
             <p class="font-medium text-slate-400 mb-1">Awaiting Slate Data</p>
-            <p class="text-xs">Data will populate automatically once the GitHub Action runs and writes <code class="text-blue-400">data/upcoming_slate.json</code>.</p>
+            <p class="text-xs">Run the workflow under the <strong>Actions</strong> tab to generate <code class="text-blue-400">data/upcoming_slate.json</code>.</p>
           </div>
         `;
       }
     }
+
     loadSlate();
   </script>
 </body>
