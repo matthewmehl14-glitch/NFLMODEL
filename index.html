@@ -9,16 +9,28 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
   <div class="max-w-6xl mx-auto px-4 py-8">
     
-    <header class="border-b border-slate-800 pb-6 mb-8 flex justify-between items-center">
+    <header class="border-b border-slate-800 pb-6 mb-8 flex justify-between items-end">
       <div>
         <h1 class="text-3xl font-black tracking-tight text-white">
           <span class="text-red-500">NFL</span> MONTE CARLO <span class="text-blue-500">ENGINE</span>
         </h1>
         <p class="text-slate-400 text-sm mt-1">Automated Model Projections vs. Pinnacle Lines</p>
       </div>
-      <div class="flex items-center space-x-2">
-        <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="text-xs font-medium text-emerald-400 uppercase tracking-wider">Model Active</span>
+      
+      <!-- Live ROI Badge -->
+      <div id="roi-badge" class="flex space-x-6 bg-slate-900 border border-slate-800 px-5 py-3 rounded-xl shadow-lg hidden">
+        <div>
+          <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Record</p>
+          <p id="stat-wlp" class="text-sm font-mono font-bold text-slate-200">-</p>
+        </div>
+        <div>
+          <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Net Profit</p>
+          <p id="stat-profit" class="text-sm font-mono font-bold text-slate-200">-</p>
+        </div>
+        <div>
+          <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">ROI</p>
+          <p id="stat-roi" class="text-sm font-mono font-bold text-slate-200">-</p>
+        </div>
       </div>
     </header>
 
@@ -35,6 +47,27 @@
   </div>
 
   <script>
+    async function loadRoiStats() {
+      try {
+        const res = await fetch('data/roi_stats.json');
+        if (!res.ok) return;
+        const stats = await res.json();
+        
+        document.getElementById('roi-badge').classList.remove('hidden');
+        document.getElementById('stat-wlp').innerText = `${stats.wins}-${stats.losses}-${stats.pushes}`;
+        
+        const profitEl = document.getElementById('stat-profit');
+        profitEl.innerText = `${stats.profit > 0 ? '+' : ''}$${stats.profit.toFixed(2)}`;
+        profitEl.className = `text-sm font-mono font-bold ${stats.profit > 0 ? 'text-emerald-400' : (stats.profit < 0 ? 'text-rose-400' : 'text-slate-200')}`;
+        
+        const roiEl = document.getElementById('stat-roi');
+        roiEl.innerText = `${stats.roi > 0 ? '+' : ''}${stats.roi}%`;
+        roiEl.className = `text-sm font-mono font-bold ${stats.roi > 0 ? 'text-emerald-400' : (stats.roi < 0 ? 'text-rose-400' : 'text-slate-200')}`;
+      } catch (err) {
+        console.log("Waiting on graded backtest data...");
+      }
+    }
+
     async function loadSlate() {
       const container = document.getElementById('games-container');
       const countBadge = document.getElementById('game-count');
@@ -74,7 +107,6 @@
                 </div>
 
                 <div class="space-y-2.5 mb-5">
-                  <!-- Away Team Row -->
                   <div class="flex justify-between items-center p-3 rounded-lg border transition-all ${
                     isAwayTarget
                       ? 'bg-red-950/40 border-red-500/70 shadow-inner'
@@ -88,7 +120,6 @@
                     <span class="text-xs font-mono bg-slate-800/90 px-2.5 py-1 rounded text-slate-300">Model: ${game.model_away_prob}%</span>
                   </div>
 
-                  <!-- Home Team Row -->
                   <div class="flex justify-between items-center p-3 rounded-lg border transition-all ${
                     isHomeTarget
                       ? 'bg-blue-950/40 border-blue-500/70 shadow-inner'
@@ -104,7 +135,6 @@
                 </div>
               </div>
 
-              <!-- Recommendation Footer -->
               <div class="pt-3 border-t border-slate-800/80 bg-slate-950/70 -mx-5 -mb-5 p-4 rounded-b-xl flex items-center justify-between">
                 <div>
                   <div class="text-[10px] uppercase font-bold tracking-wider text-slate-500">Target Play</div>
@@ -137,6 +167,7 @@
       }
     }
 
+    loadRoiStats();
     loadSlate();
   </script>
 </body>
