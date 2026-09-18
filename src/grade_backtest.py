@@ -87,11 +87,13 @@ def run_backtest(target_date=None, flat_bet=25.0):
         'TOTAL': {'W': 0, 'L': 0, 'P': 0}
     }
 
-    # Use the root-level history.csv if running from repo root
-    history_file = 'history.csv'
+    # Ensure it targets the root-level history.csv correctly 
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    history_file = os.path.join(base_dir, 'history.csv')
+
     if not os.path.exists(history_file):
-        # Fallback if run from inside src/
-        history_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'history.csv')
+        print(f"Error: {history_file} not found.")
+        return
 
     with open(history_file, mode='r', encoding='utf-8') as f:
         reader = list(csv.DictReader(f))
@@ -133,91 +135,88 @@ def run_backtest(target_date=None, flat_bet=25.0):
             spread_line=spread_line if spread_line is not None else -3.0
         )
 
-        # --- Moneyline Check ---
+        away_ml_ev = home_ml_ev = away_sp_ev = home_sp_ev = over_ev = under_ev = None
+
+        # --- Calculate Moneyline EV ---
         if away_ml is not None and home_ml is not None:
-            t_away, t_home = proportional_devig(away_ml, home_ml)
-            model_away = sim_res["away_win_prob"] / 100.0
-            model_home = sim_res["home_win_prob"] / 100.0
-            
-            b_away = ((1.0 - ML_MARKET_WEIGHT) * model_away) + (ML_MARKET_WEIGHT * t_away)
-            b_home = ((1.0 - ML_MARKET_WEIGHT) * model_home) + (ML_MARKET_WEIGHT * t_home)
+            try:
+                t_away, t_home = proportional_devig(away_ml, home_ml)
+                model_away = sim_res["away_win_prob"] / 100.0
+                model_home = sim_res["home_win_prob"] / 100.0
+                b_away = ((1.0 - ML_MARKET_WEIGHT) * model_away) + (ML_MARKET_WEIGHT * t_away)
+                b_home = ((1.0 - ML_MARKET_WEIGHT) * model_home) + (ML_MARKET_WEIGHT * t_home)
+                away_ml_ev = calculate_ev(b_away * 100.0, away_ml)
+                home_ml_ev = calculate_ev(b_home * 100.0, home_ml)
+            except: pass
 
-            away_ml_ev = calculate_ev(b_away * 100.0, away_ml)
-            home_ml_ev = calculate_ev(b_home * 100.0, home_ml)
-
-            if away_ml_ev and ml_min <= away_ml_ev <= ml_max:
-                p, res = evaluate_bet('ML', 'away', row, flat_bet)
-                if res != 'push':
-                    total_staked += flat_bet
-                    total_profit += p
-                    results_summary['ML'][res[0].upper()] += 1
-                    print(f"[{date}] BET ML: {away} ({format_odds(away_ml)}) vs {home} | {res.upper()} | EV: {away_ml_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
-
-            elif home_ml_ev and ml_min <= home_ml_ev <= ml_max:
-                p, res = evaluate_bet('ML', 'home', row, flat_bet)
-                if res != 'push':
-                    total_staked += flat_bet
-                    total_profit += p
-                    results_summary['ML'][res[0].upper()] += 1
-                    print(f"[{date}] BET ML: {home} ({format_odds(home_ml)}) vs {away} | {res.upper()} | EV: {home_ml_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
-
-        # --- Spread Check ---
+        # --- Calculate Spread EV ---
         if spread_line is not None and away_sp is not None:
-            t_sp_a, t_sp_h = proportional_devig(-110, -110)
-            model_away_sp = sim_res["spread_probs"]["away"]
-            model_home_sp = sim_res["spread_probs"]["home"]
+            try:
+                t_sp_a, t_sp_h = proportional_devig(-110, -110)
+                model_away_sp = sim_res["spread_probs"]["away"]
+                model_home_sp = sim_res["spread_probs"]["home"]
+                b_sp_a = ((1.0 - SPREAD_MARKET_WEIGHT) * model_away_sp) + (SPREAD_MARKET_WEIGHT * t_sp_a)
+                b_sp_h = ((1.0 - SPREAD_MARKET_WEIGHT) * model_home_sp) + (SPREAD_MARKET_WEIGHT * t_sp_h)
+                b_sp_push = sim_res["spread_probs"]["push"]
+                away_sp_ev = calculate_ev(b_sp_a * 100.0, -110, b_sp_push * 100.0)
+                home_sp_ev = calculate_ev(b_sp_h * 100.0, -110, b_sp_push * 100.0)
+            except: pass
 
-            b_sp_a = ((1.0 - SPREAD_MARKET_WEIGHT) * model_away_sp) + (SPREAD_MARKET_WEIGHT * t_sp_a)
-            b_sp_h = ((1.0 - SPREAD_MARKET_WEIGHT) * model_home_sp) + (SPREAD_MARKET_WEIGHT * t_sp_h)
-            b_sp_push = sim_res["spread_probs"]["push"]
-
-            away_sp_ev = calculate_ev(b_sp_a * 100.0, -110, b_sp_push * 100.0)
-            home_sp_ev = calculate_ev(b_sp_h * 100.0, -110, b_sp_push * 100.0)
-
-            if away_sp_ev and sp_min <= away_sp_ev <= sp_max:
-                p, res = evaluate_bet('SPREAD', 'away', row, flat_bet)
-                if res != 'push':
-                    total_staked += flat_bet
-                    total_profit += p
-                    results_summary['SPREAD'][res[0].upper()] += 1
-                    print(f"[{date}] BET SPREAD: {away} {away_sp:+.1f} (-110) vs {home} | {res.upper()} | EV: {away_sp_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
-
-            elif home_sp_ev and sp_min <= home_sp_ev <= sp_max:
-                p, res = evaluate_bet('SPREAD', 'home', row, flat_bet)
-                if res != 'push':
-                    total_staked += flat_bet
-                    total_profit += p
-                    results_summary['SPREAD'][res[0].upper()] += 1
-                    print(f"[{date}] BET SPREAD: {home} {home_sp:+.1f} (-110) vs {away} | {res.upper()} | EV: {home_sp_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
-
-        # --- Totals Check ---
+        # --- Calculate Totals EV ---
         if total_line is not None:
-            t_ou_o, t_ou_u = proportional_devig(-110, -110)
-            model_over = sim_res["ou_probs"]["over"]
-            model_under = sim_res["ou_probs"]["under"]
+            try:
+                t_ou_o, t_ou_u = proportional_devig(-110, -110)
+                model_over = sim_res["ou_probs"]["over"]
+                model_under = sim_res["ou_probs"]["under"]
+                b_ou_o = ((1.0 - TOTAL_MARKET_WEIGHT) * model_over) + (TOTAL_MARKET_WEIGHT * t_ou_o)
+                b_ou_u = ((1.0 - TOTAL_MARKET_WEIGHT) * model_under) + (TOTAL_MARKET_WEIGHT * t_ou_u)
+                b_ou_push = sim_res["ou_probs"]["push"]
+                over_ev = calculate_ev(b_ou_o * 100.0, -110, b_ou_push * 100.0)
+                under_ev = calculate_ev(b_ou_u * 100.0, -110, b_ou_push * 100.0)
+            except: pass
 
-            b_ou_o = ((1.0 - TOTAL_MARKET_WEIGHT) * model_over) + (TOTAL_MARKET_WEIGHT * t_ou_o)
-            b_ou_u = ((1.0 - TOTAL_MARKET_WEIGHT) * model_under) + (TOTAL_MARKET_WEIGHT * t_ou_u)
-            b_ou_push = sim_res["ou_probs"]["push"]
+        # --- Master Print Statement for Reviewing All Matchups ---
+        print(f"\n--- {date} | {away} @ {home} ---")
+        if away_ml_ev is not None: print(f"ML EV:  {away} {away_ml_ev:+.1f}% | {home} {home_ml_ev:+.1f}%")
+        if away_sp_ev is not None: print(f"SP EV:  {away} {away_sp_ev:+.1f}% | {home} {home_sp_ev:+.1f}%")
+        if over_ev is not None: print(f"TOT EV: OVER {over_ev:+.1f}% | UNDER {under_ev:+.1f}%")
 
-            over_ev = calculate_ev(b_ou_o * 100.0, -110, b_ou_push * 100.0)
-            under_ev = calculate_ev(b_ou_u * 100.0, -110, b_ou_push * 100.0)
+        # --- Evaluate Bets against Hurdles ---
+        if away_ml_ev and ml_min <= away_ml_ev <= ml_max:
+            p, res = evaluate_bet('ML', 'away', row, flat_bet)
+            if res != 'push':
+                total_staked += flat_bet; total_profit += p; results_summary['ML'][res[0].upper()] += 1
+                print(f">> BET ML: {away} ({format_odds(away_ml)}) vs {home} | {res.upper()} | EV: {away_ml_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
 
-            if over_ev and tot_min <= over_ev <= tot_max:
-                p, res = evaluate_bet('TOTAL', 'over', row, flat_bet)
-                if res != 'push':
-                    total_staked += flat_bet
-                    total_profit += p
-                    results_summary['TOTAL'][res[0].upper()] += 1
-                    print(f"[{date}] BET TOTAL: OVER {total_line} ({away}@{home}) | {res.upper()} | EV: {over_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
+        elif home_ml_ev and ml_min <= home_ml_ev <= ml_max:
+            p, res = evaluate_bet('ML', 'home', row, flat_bet)
+            if res != 'push':
+                total_staked += flat_bet; total_profit += p; results_summary['ML'][res[0].upper()] += 1
+                print(f">> BET ML: {home} ({format_odds(home_ml)}) vs {away} | {res.upper()} | EV: {home_ml_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
 
-            elif under_ev and tot_min <= under_ev <= tot_max:
-                p, res = evaluate_bet('TOTAL', 'under', row, flat_bet)
-                if res != 'push':
-                    total_staked += flat_bet
-                    total_profit += p
-                    results_summary['TOTAL'][res[0].upper()] += 1
-                    print(f"[{date}] BET TOTAL: UNDER {total_line} ({away}@{home}) | {res.upper()} | EV: {under_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
+        if away_sp_ev and sp_min <= away_sp_ev <= sp_max:
+            p, res = evaluate_bet('SPREAD', 'away', row, flat_bet)
+            if res != 'push':
+                total_staked += flat_bet; total_profit += p; results_summary['SPREAD'][res[0].upper()] += 1
+                print(f">> BET SPREAD: {away} {away_sp:+.1f} (-110) vs {home} | {res.upper()} | EV: {away_sp_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
+
+        elif home_sp_ev and sp_min <= home_sp_ev <= sp_max:
+            p, res = evaluate_bet('SPREAD', 'home', row, flat_bet)
+            if res != 'push':
+                total_staked += flat_bet; total_profit += p; results_summary['SPREAD'][res[0].upper()] += 1
+                print(f">> BET SPREAD: {home} {home_sp:+.1f} (-110) vs {away} | {res.upper()} | EV: {home_sp_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
+
+        if over_ev and tot_min <= over_ev <= tot_max:
+            p, res = evaluate_bet('TOTAL', 'over', row, flat_bet)
+            if res != 'push':
+                total_staked += flat_bet; total_profit += p; results_summary['TOTAL'][res[0].upper()] += 1
+                print(f">> BET TOTAL: OVER {total_line} ({away}@{home}) | {res.upper()} | EV: {over_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
+
+        elif under_ev and tot_min <= under_ev <= tot_max:
+            p, res = evaluate_bet('TOTAL', 'under', row, flat_bet)
+            if res != 'push':
+                total_staked += flat_bet; total_profit += p; results_summary['TOTAL'][res[0].upper()] += 1
+                print(f">> BET TOTAL: UNDER {total_line} ({away}@{home}) | {res.upper()} | EV: {under_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
 
     roi = (total_profit / total_staked * 100) if total_staked > 0 else 0.0
     total_bets = sum(results_summary['ML'].values()) + sum(results_summary['SPREAD'].values()) + sum(results_summary['TOTAL'].values())
