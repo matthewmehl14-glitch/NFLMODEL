@@ -1,0 +1,28 @@
+name: 2025 Full Season Backtest
+
+on:
+  workflow_dispatch:
+
+jobs:
+  walk-forward-backtest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests numpy pandas scipy nfl_data_py
+
+      - name: Seed 2025 Historical Lines
+        run: python src/seed_2025.py
+
+      - name: Run 2025 Walk-Forward Engine
+        run: python src/walk_forward_2025.py
