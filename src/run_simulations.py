@@ -123,10 +123,6 @@ def get_final_game_scores(pbp):
     return games.groupby("game_id", as_index=False).last()
 
 def aggregate_team_epa_qb_isolated(pbp):
-    """
-    Isolates Quarterback EPA (like Starting Pitchers) and regresses against league average
-    before combining it with Team Rushing and Defense.
-    """
     if pbp.empty:
         return {}, {"off_epa_per_play": 0.0, "off_pass_epa": 0.0, "off_rush_epa": 0.0, "def_epa_per_play": 0.0, "def_pass_epa": 0.0, "def_rush_epa": 0.0}, 0
 
@@ -146,14 +142,12 @@ def aggregate_team_epa_qb_isolated(pbp):
         off = df[df["posteam"] == team]
         defense = df[df["defteam"] == team]
         
-        # QB ISOLATION & REGRESSION
         pass_off = off[off["play_type"] == "pass"]
         if not pass_off.empty and "passer_player_name" in pass_off.columns:
             qb_stats = pass_off.groupby("passer_player_name").agg(
                 dropbacks=("epa", "count"),
                 qb_epa=("epa", "mean")
             ).reset_index()
-            # Identify starting QB by max dropbacks
             primary_qb = qb_stats.loc[qb_stats["dropbacks"].idxmax()]
             qb_name = primary_qb["passer_player_name"]
             qb_epa = primary_qb["qb_epa"]
@@ -163,20 +157,16 @@ def aggregate_team_epa_qb_isolated(pbp):
             qb_epa = league_pass_epa
             qb_dropbacks = 0
 
-        # Bayesian Shrinkage for QB (equivalent to 70 innings pitched)
-        # We use 150 dropbacks as the league average regression baseline
+        # Bayesian regression on QB dropbacks
         adj_qb_epa = ((qb_dropbacks * qb_epa) + (150 * league_pass_epa)) / (qb_dropbacks + 150)
 
-        # Team Rush Blend
         rush_off = off[off["play_type"] == "run"]
         rush_epa = rush_off["epa"].mean() if not rush_off.empty else league_rush_epa
         rush_atts = len(rush_off)
         adj_rush_epa = ((rush_atts * rush_epa) + (100 * league_rush_epa)) / (rush_atts + 100)
 
-        # Recombine 60% Pass / 40% Rush for true expected offensive output
         comp_off_epa = (0.60 * adj_qb_epa) + (0.40 * adj_rush_epa)
 
-        # Defense Logic
         pass_def = defense[defense["play_type"] == "pass"]
         rush_def = defense[defense["play_type"] == "run"]
 
@@ -390,49 +380,55 @@ def simulate_nfl_game(away_stats, home_stats, league_points=21.5, league_epa=0.0
     }
 
 def grade_historical_scores():
-    if not os.path.exists("history.csv"): return
-    print("Checking for ungraded games in history.csv...")
-    df = pd.read_csv("history.csv")
-    if df.empty: return
-    
-    is_ungraded = (df["Actual_Away_Score"].isna() | df["Actual_Away_Score"].astype(str).eq("N/A"))
-    ungraded_dates = df[is_ungraded]["Date"].dropna().unique()
-    if len(ungraded_dates) == 0:
-        print("All games are graded.")
-        return
+    # Resolve root and data directories
+    base_dir = os.path.dirname(os.path.dirname(__file__))
+    target_files = [
+        os.path.join(base_dir, "history.csv"),
+        os.path.join(base_dir, "data", "historical_log.csv")
+    ]
 
-    for target_date in ungraded_dates:
-        try:
-            dt = datetime.strptime(str(target_date), "%Y-%m-%d")
-        except ValueError: continue
+    for history_file in target_files:
+        if not os.path.exists(history_file): continue
+        print(f"Checking for ungraded games in {os.path.basename(history_file)}...")
+        df = pd.read_csv(history_file)
+        if df.empty: continue
         
-        check_dates = [dt.strftime("%Y%m%d"), (dt + pd.Timedelta(days=1)).strftime("%Y%m%d"), (dt - pd.Timedelta(days=1)).strftime("%Y%m%d")]
-        scores = {}
+        is_ungraded = (df["Actual_Away_Score"].isna() | df["Actual_Away_Score"].astype(str).eq("N/A"))
+        ungraded_dates = df[is_ungraded]["Date"].dropna().unique()
+        if len(ungraded_dates) == 0:
+            continue
 
-        for dt_str in check_dates:
-            url = f"https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates={dt_str}"
+        for target_date in ungraded_dates:
             try:
-                resp = requests.get(url, timeout=10)
-                if resp.status_code != 200: continue
-                data = resp.json()
-                for event in data.get("events", []):
-                    for comp in event.get("competitions", []):
-                        if not comp.get("status", {}).get("type", {}).get("completed", False): continue
-                        for team in comp.get("competitors", []):
-                            abbr = ESPN_TEAM_MAPPING.get(team.get("team", {}).get("name", ""))
-                            if abbr: scores[f"{abbr}_{team.get('homeAway')}"] = team.get("score", 0)
-            except Exception: continue
+                dt = datetime.strptime(str(target_date), "%Y-%m-%d")
+            except ValueError: continue
+            
+            check_dates = [dt.strftime("%Y%m%d"), (dt + pd.Timedelta(days=1)).strftime("%Y%m%d"), (dt - pd.Timedelta(days=1)).strftime("%Y%m%d")]
+            scores = {}
 
-        for idx, row in df.iterrows():
-            if not (pd.isna(row["Actual_Away_Score"]) or str(row["Actual_Away_Score"]) == "N/A"): continue
-            away, home = row["Away_Team"], row["Home_Team"]
-            if f"{away}_away" in scores and f"{home}_home" in scores:
-                df.at[idx, "Actual_Away_Score"] = scores[f"{away}_away"]
-                df.at[idx, "Actual_Home_Score"] = scores[f"{home}_home"]
-                print(f"Graded: {away} {scores[f'{away}_away']} @ {home} {scores[f'{home}_home']}")
+            for dt_str in check_dates:
+                url = f"https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates={dt_str}"
+                try:
+                    resp = requests.get(url, timeout=10)
+                    if resp.status_code != 200: continue
+                    data = resp.json()
+                    for event in data.get("events", []):
+                        for comp in event.get("competitions", []):
+                            if not comp.get("status", {}).get("type", {}).get("completed", False): continue
+                            for team in comp.get("competitors", []):
+                                abbr = ESPN_TEAM_MAPPING.get(team.get("team", {}).get("name", ""))
+                                if abbr: scores[f"{abbr}_{team.get('homeAway')}"] = team.get("score", 0)
+                except Exception: continue
 
-    df.to_csv("history.csv", index=False)
-    print("history.csv grading pass complete.")
+            for idx, row in df.iterrows():
+                if not (pd.isna(row["Actual_Away_Score"]) or str(row["Actual_Away_Score"]) == "N/A"): continue
+                away, home = row["Away_Team"], row["Home_Team"]
+                if f"{away}_away" in scores and f"{home}_home" in scores:
+                    df.at[idx, "Actual_Away_Score"] = scores[f"{away}_away"]
+                    df.at[idx, "Actual_Home_Score"] = scores[f"{home}_home"]
+                    print(f"Graded: {away} {scores[f'{away}_away']} @ {home} {scores[f'{home}_home']}")
+
+        df.to_csv(history_file, index=False)
 
 def run_live_scraper():
     print("Running Live Odds Scraper & Building Dashboard JSON...")
@@ -446,12 +442,16 @@ def run_live_scraper():
     games = response.json()
     epa_stats, league_points, league_epa, diagnostics = get_blended_nfl_stats(PRIOR_SEASON, CURRENT_SEASON)
 
-    history_file = "history.csv"
+    base_dir = os.path.dirname(os.path.dirname(__file__))
+    os.makedirs(os.path.join(base_dir, "data"), exist_ok=True)
+
     history_fields = ["Date", "Away_Team", "Home_Team", "Pinnacle_Away_ML", "Pinnacle_Home_ML", "Pinnacle_Away_Spread", "Pinnacle_Home_Spread", "Pinnacle_Total_Line", "Actual_Away_Score", "Actual_Home_Score"]
-    if not os.path.exists(history_file):
-        with open(history_file, "w", newline="") as f: csv.writer(f).writerow(history_fields)
     
-    try: existing_history = pd.read_csv(history_file)
+    primary_hist = os.path.join(base_dir, "history.csv")
+    if not os.path.exists(primary_hist):
+        with open(primary_hist, "w", newline="") as f: csv.writer(f).writerow(history_fields)
+    
+    try: existing_history = pd.read_csv(primary_hist)
     except Exception: existing_history = pd.DataFrame(columns=history_fields)
 
     dashboard_games = []
@@ -493,15 +493,31 @@ def run_live_scraper():
                 if out.get("name") == "Over": total_line, over_odds = out.get("point", "N/A"), out.get("price", "N/A")
                 elif out.get("name") == "Under": under_odds = out.get("price", "N/A")
 
-        match_exists = not existing_history[
+        # Dynamic Upsert: update existing ungraded row or append new
+        match_idx = existing_history[
             (existing_history["Away_Team"] == away) & 
             (existing_history["Home_Team"] == home) &
             (existing_history["Date"] == date_str)
-        ].empty
+        ].index
 
-        if not match_exists and (away_ml != "N/A" or away_sp != "N/A" or total_line != "N/A"):
-            with open(history_file, "a", newline="") as f:
-                csv.writer(f).writerow([date_str, away, home, away_ml, home_ml, away_sp, home_sp, total_line, "N/A", "N/A"])
+        if not match_idx.empty:
+            i = match_idx[0]
+            # If game hasn't been played yet, update lines with latest Pinnacle movement
+            if pd.isna(existing_history.at[i, "Actual_Away_Score"]) or str(existing_history.at[i, "Actual_Away_Score"]) == "N/A":
+                existing_history.at[i, "Pinnacle_Away_ML"] = away_ml
+                existing_history.at[i, "Pinnacle_Home_ML"] = home_ml
+                existing_history.at[i, "Pinnacle_Away_Spread"] = away_sp
+                existing_history.at[i, "Pinnacle_Home_Spread"] = home_sp
+                existing_history.at[i, "Pinnacle_Total_Line"] = total_line
+        else:
+            new_row = pd.DataFrame([{
+                "Date": date_str, "Away_Team": away, "Home_Team": home,
+                "Pinnacle_Away_ML": away_ml, "Pinnacle_Home_ML": home_ml,
+                "Pinnacle_Away_Spread": away_sp, "Pinnacle_Home_Spread": home_sp,
+                "Pinnacle_Total_Line": total_line,
+                "Actual_Away_Score": "N/A", "Actual_Home_Score": "N/A"
+            }])
+            existing_history = pd.concat([existing_history, new_row], ignore_index=True)
 
         sim_res = simulate_nfl_game(epa_stats[away], epa_stats[home], league_points=league_points, league_epa=league_epa, hfa_points=diagnostics["calibration"]["hfa_points"], epa_to_points=diagnostics["calibration"]["epa_to_points_per_play"], total_line=total_line, spread_line=home_sp, num_sims=NUM_SIMS, rng=rng)
 
@@ -555,13 +571,23 @@ def run_live_scraper():
             },
         })
 
+    # Save to history.csv AND data/historical_log.csv
+    existing_history.to_csv(primary_hist, index=False)
+    existing_history.to_csv(os.path.join(base_dir, "data", "historical_log.csv"), index=False)
+
     primary_date = dashboard_games[0]["date"] if dashboard_games else datetime.now(ZoneInfo(DISPLAY_TIMEZONE)).strftime("%Y-%m-%d")
     output_json = {
         "last_updated": datetime.now(ZoneInfo("UTC")).isoformat(), "slate": primary_date, "target_date": primary_date,
         "team_stats": epa_stats, "todays_games": dashboard_games, "games": dashboard_games,
     }
-    with open("data.json", "w") as f: json.dump(output_json, f, indent=4)
-    print(f"Scraping, JSON export, and line updates complete. Exported {len(dashboard_games)} games.")
+
+    # Save to data.json AND data/upcoming_slate.json
+    with open(os.path.join(base_dir, "data.json"), "w") as f:
+        json.dump(output_json, f, indent=4)
+    with open(os.path.join(base_dir, "data", "upcoming_slate.json"), "w") as f:
+        json.dump(output_json, f, indent=4)
+
+    print(f"Scraping complete. Exported {len(dashboard_games)} games to root and data/ locations.")
 
 if __name__ == "__main__":
     grade_historical_scores()
