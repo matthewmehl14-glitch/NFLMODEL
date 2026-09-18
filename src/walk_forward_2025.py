@@ -20,7 +20,6 @@ from run_simulations import (
     american_to_decimal,
     ML_MARKET_WEIGHT,
     SPREAD_MARKET_WEIGHT,
-    TOTAL_MARKET_WEIGHT,
     NUM_SIMS,
     DEFAULT_EPA_TO_POINTS_PER_PLAY,
     EPA_PRIOR_PLAYS
@@ -61,13 +60,6 @@ def evaluate_bet(market_type, pick, row, bet_amount=25.0):
         if margin + line == 0: return 0.0, 'push'
         won = (margin + line) > 0
         profit = bet_amount * (100 / 110) if won else -bet_amount  
-        return profit, ('win' if won else 'loss')
-
-    elif market_type == 'TOTAL':
-        total_line = backtest_safe_float(row.get('Pinnacle_Total_Line'))
-        if total_line is None or actual_total == total_line: return 0.0, 'push'
-        won = (actual_total > total_line) if pick == 'over' else (actual_total < total_line)
-        profit = bet_amount * (100 / 110) if won else -bet_amount
         return profit, ('win' if won else 'loss')
 
 def get_walk_forward_stats(prior_pbp, current_pbp):
@@ -124,7 +116,6 @@ def get_walk_forward_stats(prior_pbp, current_pbp):
 def run_walk_forward_backtest(flat_bet=25.0):
     ml_min, ml_max = 3.0, 10.0
     sp_min, sp_max = 1.5, 7.0
-    tot_min, tot_max = 1.5, 7.0
 
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     history_file = os.path.join(base_dir, 'history_2025.csv')
@@ -140,7 +131,7 @@ def run_walk_forward_backtest(flat_bet=25.0):
     current_raw = nfl.import_pbp_data([2025])
     current_pbp = is_regular_season(current_raw)
 
-    print("\n--- INITIATING 2025 WALK-FORWARD BACKTEST ---")
+    print("\n--- INITIATING 2025 WALK-FORWARD BACKTEST (ML & SPREADS ONLY) ---")
     
     with open(history_file, mode='r', encoding='utf-8') as f:
         reader = list(csv.DictReader(f))
@@ -150,8 +141,7 @@ def run_walk_forward_backtest(flat_bet=25.0):
     total_profit = 0.0
     results_summary = {
         'ML': {'W': 0, 'L': 0, 'P': 0},
-        'SPREAD': {'W': 0, 'L': 0, 'P': 0},
-        'TOTAL': {'W': 0, 'L': 0, 'P': 0}
+        'SPREAD': {'W': 0, 'L': 0, 'P': 0}
     }
 
     cached_stats_by_date = {}
@@ -166,7 +156,6 @@ def run_walk_forward_backtest(flat_bet=25.0):
 
         if date not in cached_stats_by_date:
             print(f"-> Time-traveling to {date}: Recalculating league baselines based strictly on past plays...")
-            # Core logic: Filter current season PBP down to ONLY plays occurring prior to this specific game
             current_pbp_filtered = current_pbp[current_pbp['game_date'] < date].copy()
             cached_stats_by_date[date] = get_walk_forward_stats(prior_pbp, current_pbp_filtered)
             
@@ -179,7 +168,6 @@ def run_walk_forward_backtest(flat_bet=25.0):
 
         games_evaluated += 1
         
-        total_line = backtest_safe_float(row.get('Pinnacle_Total_Line'))
         spread_line = backtest_safe_float(row.get('Pinnacle_Home_Spread'))
         away_sp = backtest_safe_float(row.get('Pinnacle_Away_Spread'))
         home_sp = backtest_safe_float(row.get('Pinnacle_Home_Spread'))
@@ -193,7 +181,6 @@ def run_walk_forward_backtest(flat_bet=25.0):
             league_epa=league_epa,
             hfa_points=diagnostics["calibration"]["hfa_points"],
             epa_to_points=diagnostics["calibration"]["epa_to_points_per_play"],
-            total_line=total_line if total_line is not None else 45.0, 
             spread_line=spread_line if spread_line is not None else -3.0
         )
 
@@ -243,41 +230,16 @@ def run_walk_forward_backtest(flat_bet=25.0):
                         print(f"[{date}] BET SPREAD: {home} {home_sp:+.1f} (-110) vs {away} | {res.upper()} | EV: {home_sp_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
             except: pass
 
-        # Totals Check
-        if total_line is not None:
-            try:
-                t_ou_o, t_ou_u = proportional_devig(-110, -110)
-                b_ou_o = ((1.0 - TOTAL_MARKET_WEIGHT) * sim_res["ou_probs"]["over"]) + (TOTAL_MARKET_WEIGHT * t_ou_o)
-                b_ou_u = ((1.0 - TOTAL_MARKET_WEIGHT) * sim_res["ou_probs"]["under"]) + (TOTAL_MARKET_WEIGHT * t_ou_u)
-                b_ou_push = sim_res["ou_probs"]["push"]
-
-                over_ev = calculate_ev(b_ou_o * 100.0, -110, b_ou_push * 100.0)
-                under_ev = calculate_ev(b_ou_u * 100.0, -110, b_ou_push * 100.0)
-
-                if over_ev and tot_min <= over_ev <= tot_max:
-                    p, res = evaluate_bet('TOTAL', 'over', row, flat_bet)
-                    if res != 'push':
-                        total_staked += flat_bet; total_profit += p; results_summary['TOTAL'][res[0].upper()] += 1
-                        print(f"[{date}] BET TOTAL: OVER {total_line} ({away}@{home}) | {res.upper()} | EV: {over_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
-
-                elif under_ev and tot_min <= under_ev <= tot_max:
-                    p, res = evaluate_bet('TOTAL', 'under', row, flat_bet)
-                    if res != 'push':
-                        total_staked += flat_bet; total_profit += p; results_summary['TOTAL'][res[0].upper()] += 1
-                        print(f"[{date}] BET TOTAL: UNDER {total_line} ({away}@{home}) | {res.upper()} | EV: {under_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
-            except: pass
-
     roi = (total_profit / total_staked * 100) if total_staked > 0 else 0.0
-    total_bets = sum(results_summary['ML'].values()) + sum(results_summary['SPREAD'].values()) + sum(results_summary['TOTAL'].values())
+    total_bets = sum(results_summary['ML'].values()) + sum(results_summary['SPREAD'].values())
     
     print("\n--------------------------------------------------")
-    print("                FINAL 2025 SUMMARY")
+    print("           FINAL 2025 SUMMARY (NO TOTALS)         ")
     print("--------------------------------------------------")
     print(f"Games Evaluated:  {games_evaluated}")
     print(f"Total Bets Placed: {total_bets}")
     print(f"Moneyline Record: {results_summary['ML']['W']}-{results_summary['ML']['L']}-{results_summary['ML']['P']}")
     print(f"Spread Record:    {results_summary['SPREAD']['W']}-{results_summary['SPREAD']['L']}-{results_summary['SPREAD']['P']}")
-    print(f"Totals Record:    {results_summary['TOTAL']['W']}-{results_summary['TOTAL']['L']}-{results_summary['TOTAL']['P']}")
     print(f"Total Staked:     ${total_staked:.2f}")
     print(f"Net Profit:       ${total_profit:+.2f}")
     print(f"Strategy ROI:     {roi:.2f}%")
