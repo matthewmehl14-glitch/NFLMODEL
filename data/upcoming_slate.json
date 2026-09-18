@@ -1,227 +1,2215 @@
-[
-    {
-        "id": "aee7eae1849ebb103b9bf233e9741392",
-        "commence_time": "2026-09-20T17:00:00Z",
-        "away_team": "Carolina Panthers",
-        "home_team": "Atlanta Falcons",
-        "model_away_prob": 49.5,
-        "model_home_prob": 50.5,
-        "pinnacle_away_line": "Carolina Panthers -2.5",
-        "target_team": "Atlanta Falcons",
-        "target_side": "HOME",
-        "target_line": "+2.5",
-        "odds_dec": 2.02,
-        "recommended_bet": "Atlanta Falcons +2.5",
-        "ev": 2.1
+{
+    "last_updated": "2026-09-18T16:29:57.179389+00:00",
+    "slate": "2026-09-20",
+    "target_date": "2026-09-20",
+    "team_stats": {
+        "ARI": {
+            "primary_qb": "J.Brissett",
+            "off_epa_per_play": -0.010775704029124764,
+            "off_pass_epa": 0.0064497793308506786,
+            "off_rush_epa": -0.036613929069087926,
+            "def_epa_per_play": 0.05085312302519635,
+            "def_pass_epa": 0.11181234527057134,
+            "def_rush_epa": -0.029725195431127782,
+            "plays": 69,
+            "def_plays": 51,
+            "pace": 63.0
+        },
+        "ATL": {
+            "primary_qb": "C.Rush",
+            "off_epa_per_play": -0.012349541383332092,
+            "off_pass_epa": -0.004937708070021851,
+            "off_rush_epa": -0.023467291353297455,
+            "def_epa_per_play": -0.04330760283383527,
+            "def_pass_epa": -0.0676702445861833,
+            "def_rush_epa": -0.00877948787362353,
+            "plays": 57,
+            "def_plays": 61,
+            "pace": 63.0
+        },
+        "BAL": {
+            "primary_qb": "L.Jackson",
+            "off_epa_per_play": 0.04975681596564637,
+            "off_pass_epa": 0.02768627833867689,
+            "off_rush_epa": 0.08286262240610058,
+            "def_epa_per_play": -0.006066400417955246,
+            "def_pass_epa": 0.011499094515709948,
+            "def_rush_epa": -0.0315991828246885,
+            "plays": 60,
+            "def_plays": 53,
+            "pace": 63.0
+        },
+        "BUF": {
+            "primary_qb": "J.Allen",
+            "off_epa_per_play": 0.1087203535629003,
+            "off_pass_epa": 0.11974423560934702,
+            "off_rush_epa": 0.09218453049323024,
+            "def_epa_per_play": 0.028114102711187337,
+            "def_pass_epa": -0.007302632259431306,
+            "def_rush_epa": 0.060390122704834584,
+            "plays": 118,
+            "def_plays": 135,
+            "pace": 63.0
+        },
+        "CAR": {
+            "primary_qb": "B.Young",
+            "off_epa_per_play": -0.017351159326270432,
+            "off_pass_epa": -0.022725952243454087,
+            "off_rush_epa": -0.009288969950494944,
+            "def_epa_per_play": 0.12091422778494815,
+            "def_pass_epa": 0.15749679410711248,
+            "def_rush_epa": 0.08011702432277354,
+            "plays": 62,
+            "def_plays": 70,
+            "pace": 63.0
+        },
+        "CHI": {
+            "primary_qb": "C.Williams",
+            "off_epa_per_play": 0.06828963944634288,
+            "off_pass_epa": 0.07576748771489941,
+            "off_rush_epa": 0.05707286704350806,
+            "def_epa_per_play": 0.05152106297996653,
+            "def_pass_epa": 0.08239317920816924,
+            "def_rush_epa": 0.00627547682331496,
+            "plays": 70,
+            "def_plays": 62,
+            "pace": 63.0
+        },
+        "CIN": {
+            "primary_qb": "J.Burrow",
+            "off_epa_per_play": 0.045938381445448914,
+            "off_pass_epa": 0.062459648869217,
+            "off_rush_epa": 0.0211564803097968,
+            "def_epa_per_play": 0.09419304360439403,
+            "def_pass_epa": 0.11811877512878961,
+            "def_rush_epa": 0.06793252289493439,
+            "plays": 62,
+            "def_plays": 51,
+            "pace": 63.0
+        },
+        "CLE": {
+            "primary_qb": "D.Watson",
+            "off_epa_per_play": -0.10894433038749833,
+            "off_pass_epa": -0.16000434713083814,
+            "off_rush_epa": -0.03235430527248863,
+            "def_epa_per_play": -0.045061060266515796,
+            "def_pass_epa": -0.023393029935049436,
+            "def_rush_epa": -0.051597017868859875,
+            "plays": 49,
+            "def_plays": 53,
+            "pace": 63.0
+        },
+        "DAL": {
+            "primary_qb": "D.Prescott",
+            "off_epa_per_play": 0.0815731829624811,
+            "off_pass_epa": 0.13174447486753685,
+            "off_rush_epa": 0.006316245104897509,
+            "def_epa_per_play": 0.19555330148307226,
+            "def_pass_epa": 0.28856235806659986,
+            "def_rush_epa": 0.08994623762305065,
+            "plays": 52,
+            "def_plays": 65,
+            "pace": 63.0
+        },
+        "DEN": {
+            "primary_qb": "B.Nix",
+            "off_epa_per_play": 0.03595014202707573,
+            "off_pass_epa": 0.06353988161905513,
+            "off_rush_epa": -0.005434467360893381,
+            "def_epa_per_play": -0.045646534911517433,
+            "def_pass_epa": -0.10796494910429263,
+            "def_rush_epa": 0.02672379226263227,
+            "plays": 46,
+            "def_plays": 64,
+            "pace": 63.0
+        },
+        "DET": {
+            "primary_qb": "J.Goff",
+            "off_epa_per_play": 0.06901128640950409,
+            "off_pass_epa": 0.1344595500117039,
+            "off_rush_epa": -0.02916110899379563,
+            "def_epa_per_play": 0.04000817160999429,
+            "def_pass_epa": 0.03651441031716008,
+            "def_rush_epa": 0.046187056012559624,
+            "plays": 135,
+            "def_plays": 152,
+            "pace": 63.0
+        },
+        "GB": {
+            "primary_qb": "J.Love",
+            "off_epa_per_play": 0.09591891212801394,
+            "off_pass_epa": 0.17266511170559676,
+            "off_rush_epa": -0.019200387238360275,
+            "def_epa_per_play": 0.03152160022269796,
+            "def_pass_epa": 0.08132683841231601,
+            "def_rush_epa": -0.029730101320933153,
+            "plays": 67,
+            "def_plays": 59,
+            "pace": 63.0
+        },
+        "HOU": {
+            "primary_qb": "C.Stroud",
+            "off_epa_per_play": -0.00045040764232076504,
+            "off_pass_epa": 0.028323933309317866,
+            "off_rush_epa": -0.0436119190697787,
+            "def_epa_per_play": -0.11585794191444869,
+            "def_pass_epa": -0.139706341038763,
+            "def_rush_epa": -0.08323591631070702,
+            "plays": 73,
+            "def_plays": 52,
+            "pace": 63.0
+        },
+        "IND": {
+            "primary_qb": "D.Jones",
+            "off_epa_per_play": 0.0809752611810566,
+            "off_pass_epa": 0.08738189548060377,
+            "off_rush_epa": 0.07136530973173588,
+            "def_epa_per_play": 0.045644273900467415,
+            "def_pass_epa": 0.08366840948229251,
+            "def_rush_epa": -0.006761626057002854,
+            "plays": 53,
+            "def_plays": 60,
+            "pace": 63.0
+        },
+        "JAX": {
+            "primary_qb": "T.Lawrence",
+            "off_epa_per_play": 0.0337901393361094,
+            "off_pass_epa": 0.057137176673953474,
+            "off_rush_epa": -0.0012304166706567123,
+            "def_epa_per_play": -0.09687414201171467,
+            "def_pass_epa": -0.1461109696225759,
+            "def_rush_epa": -0.018137741767550362,
+            "plays": 53,
+            "def_plays": 49,
+            "pace": 63.0
+        },
+        "KC": {
+            "primary_qb": "P.Mahomes",
+            "off_epa_per_play": 0.06829810799361712,
+            "off_pass_epa": 0.0913275123796589,
+            "off_rush_epa": 0.03375400141455445,
+            "def_epa_per_play": -0.05264070382834551,
+            "def_pass_epa": -0.04669808023379523,
+            "def_rush_epa": -0.048938006730624914,
+            "plays": 64,
+            "def_plays": 46,
+            "pace": 63.0
+        },
+        "LA": {
+            "primary_qb": "M.Stafford",
+            "off_epa_per_play": 0.10542086995843872,
+            "off_pass_epa": 0.159938354574382,
+            "off_rush_epa": 0.02364464303452381,
+            "def_epa_per_play": -0.015643681174722205,
+            "def_pass_epa": -0.02112342481469286,
+            "def_rush_epa": -0.009300951942287642,
+            "plays": 56,
+            "def_plays": 64,
+            "pace": 63.0
+        },
+        "LAC": {
+            "primary_qb": "J.Herbert",
+            "off_epa_per_play": -0.002307838032389916,
+            "off_pass_epa": -0.007595213532424515,
+            "off_rush_epa": 0.005623225217661985,
+            "def_epa_per_play": -0.04613159453945119,
+            "def_pass_epa": -0.04117106660596852,
+            "def_rush_epa": -0.05111221894065835,
+            "plays": 51,
+            "def_plays": 69,
+            "pace": 63.0
+        },
+        "LV": {
+            "primary_qb": "K.Cousins",
+            "off_epa_per_play": -0.12470407678730357,
+            "off_pass_epa": -0.08947939989713492,
+            "off_rush_epa": -0.1775410921225566,
+            "def_epa_per_play": -0.004647314548492432,
+            "def_pass_epa": 0.03631309668223063,
+            "def_rush_epa": -0.04772523045539856,
+            "plays": 64,
+            "def_plays": 50,
+            "pace": 63.0
+        },
+        "MIA": {
+            "primary_qb": "M.Willis",
+            "off_epa_per_play": 0.00045222420281534545,
+            "off_pass_epa": 0.013871224872245522,
+            "off_rush_epa": -0.01967627680132991,
+            "def_epa_per_play": 0.07064022457805173,
+            "def_pass_epa": 0.11005335853531442,
+            "def_rush_epa": 0.025508193363403448,
+            "plays": 50,
+            "def_plays": 64,
+            "pace": 63.0
+        },
+        "MIN": {
+            "primary_qb": "C.Wentz",
+            "off_epa_per_play": -0.06357392400757671,
+            "off_pass_epa": -0.09895605304805163,
+            "off_rush_epa": -0.010500730446864314,
+            "def_epa_per_play": -0.1102715385100571,
+            "def_pass_epa": -0.1352646851740634,
+            "def_rush_epa": -0.10709766568157351,
+            "plays": 59,
+            "def_plays": 67,
+            "pace": 63.0
+        },
+        "NE": {
+            "primary_qb": "D.Maye",
+            "off_epa_per_play": 0.07514637373967288,
+            "off_pass_epa": 0.12712568668819474,
+            "off_rush_epa": -0.0028225956831099248,
+            "def_epa_per_play": -0.07446538743623418,
+            "def_pass_epa": -0.08638741312677695,
+            "def_rush_epa": -0.05529272202110664,
+            "plays": 67,
+            "def_plays": 47,
+            "pace": 63.0
+        },
+        "NO": {
+            "primary_qb": "T.Shough",
+            "off_epa_per_play": -0.031855520265465,
+            "off_pass_epa": -0.008624662041722544,
+            "off_rush_epa": -0.06670180760107869,
+            "def_epa_per_play": -0.04988164011981923,
+            "def_pass_epa": -0.03611187881398276,
+            "def_rush_epa": -0.06496944782141022,
+            "plays": 86,
+            "def_plays": 73,
+            "pace": 63.0
+        },
+        "NYG": {
+            "primary_qb": "J.Dart",
+            "off_epa_per_play": 0.019197407754310725,
+            "off_pass_epa": 0.012239657526183422,
+            "off_rush_epa": 0.02963403309650168,
+            "def_epa_per_play": 0.10272707348376249,
+            "def_pass_epa": 0.059779057658351634,
+            "def_rush_epa": 0.15438259069898488,
+            "plays": 65,
+            "def_plays": 52,
+            "pace": 63.0
+        },
+        "NYJ": {
+            "primary_qb": "G.Smith",
+            "off_epa_per_play": -0.03624738507016658,
+            "off_pass_epa": -0.03274274031059167,
+            "off_rush_epa": -0.04150435220952894,
+            "def_epa_per_play": 0.1182084685411379,
+            "def_pass_epa": 0.20281020726154003,
+            "def_rush_epa": 0.04283301065984972,
+            "plays": 60,
+            "def_plays": 49,
+            "pace": 63.0
+        },
+        "PHI": {
+            "primary_qb": "J.Hurts",
+            "off_epa_per_play": 0.025334715369561105,
+            "off_pass_epa": 0.037016938050452176,
+            "off_rush_epa": 0.007811381348224497,
+            "def_epa_per_play": -0.0511259045292679,
+            "def_pass_epa": -0.07381021549813767,
+            "def_rush_epa": -0.022916596653497115,
+            "plays": 51,
+            "def_plays": 68,
+            "pace": 63.0
+        },
+        "PIT": {
+            "primary_qb": "A.Rodgers",
+            "off_epa_per_play": -0.008693768888366794,
+            "off_pass_epa": -0.015030630687415444,
+            "off_rush_epa": 0.0008115238102061838,
+            "def_epa_per_play": -0.02103503703810193,
+            "def_pass_epa": -0.051516722406808865,
+            "def_rush_epa": 0.0013154953294301185,
+            "plays": 61,
+            "def_plays": 57,
+            "pace": 63.0
+        },
+        "SEA": {
+            "primary_qb": "D.Lock",
+            "off_epa_per_play": 0.054021483968748264,
+            "off_pass_epa": 0.11374152992234597,
+            "off_rush_epa": -0.03555858496164827,
+            "def_epa_per_play": -0.12093509532654821,
+            "def_pass_epa": -0.11689451304952389,
+            "def_rush_epa": -0.12864742081859637,
+            "plays": 47,
+            "def_plays": 67,
+            "pace": 63.0
+        },
+        "SF": {
+            "primary_qb": "B.Purdy",
+            "off_epa_per_play": 0.05026711476465238,
+            "off_pass_epa": 0.08894198164116478,
+            "off_rush_epa": -0.007745185550116199,
+            "def_epa_per_play": 0.0287838931146421,
+            "def_pass_epa": 0.04447904647442334,
+            "def_rush_epa": 0.0018300446763373258,
+            "plays": 64,
+            "def_plays": 56,
+            "pace": 63.0
+        },
+        "TB": {
+            "primary_qb": "B.Mayfield",
+            "off_epa_per_play": 0.002453594764757575,
+            "off_pass_epa": -0.00270386317261816,
+            "off_rush_epa": 0.010189781670821177,
+            "def_epa_per_play": 0.011287182770584794,
+            "def_pass_epa": 0.04910801580070934,
+            "def_rush_epa": -0.049620038374161825,
+            "plays": 51,
+            "def_plays": 62,
+            "pace": 63.0
+        },
+        "TEN": {
+            "primary_qb": "C.Ward",
+            "off_epa_per_play": -0.09569521377618127,
+            "off_pass_epa": -0.13455425299836082,
+            "off_rush_epa": -0.03740665494291198,
+            "def_epa_per_play": 0.11008550161900728,
+            "def_pass_epa": 0.19848346191903818,
+            "def_rush_epa": 0.015656612368057602,
+            "plays": 49,
+            "def_plays": 60,
+            "pace": 63.0
+        },
+        "WAS": {
+            "primary_qb": "J.Daniels",
+            "off_epa_per_play": 0.011258497063541897,
+            "off_pass_epa": 0.00823605863960112,
+            "off_rush_epa": 0.015792154699453064,
+            "def_epa_per_play": 0.13515726073816453,
+            "def_pass_epa": 0.18330121119640885,
+            "def_rush_epa": 0.07795547193407748,
+            "plays": 68,
+            "def_plays": 51,
+            "pace": 63.0
+        }
     },
-    {
-        "id": "2143ade9684fd876b68a4e8cbf451f05",
-        "commence_time": "2026-09-20T17:00:00Z",
-        "away_team": "New Orleans Saints",
-        "home_team": "Baltimore Ravens",
-        "model_away_prob": 54.0,
-        "model_home_prob": 46.0,
-        "pinnacle_away_line": "New Orleans Saints +9",
-        "target_team": "New Orleans Saints",
-        "target_side": "AWAY",
-        "target_line": "+9",
-        "odds_dec": 1.83,
-        "recommended_bet": "New Orleans Saints +9",
-        "ev": -1.2
-    },
-    {
-        "id": "0283a29e1b38ef78b29b904fd56a16dd",
-        "commence_time": "2026-09-20T17:00:00Z",
-        "away_team": "Minnesota Vikings",
-        "home_team": "Chicago Bears",
-        "model_away_prob": 32.3,
-        "model_home_prob": 67.7,
-        "pinnacle_away_line": "Minnesota Vikings +5.5",
-        "target_team": "Chicago Bears",
-        "target_side": "HOME",
-        "target_line": "-5.5",
-        "odds_dec": 2.09,
-        "recommended_bet": "Chicago Bears -5.5",
-        "ev": 41.5
-    },
-    {
-        "id": "36ad2fa722f4915ef23d2c81351261de",
-        "commence_time": "2026-09-20T17:00:00Z",
-        "away_team": "Cincinnati Bengals",
-        "home_team": "Houston Texans",
-        "model_away_prob": 76.5,
-        "model_home_prob": 23.5,
-        "pinnacle_away_line": "Cincinnati Bengals +3",
-        "target_team": "Cincinnati Bengals",
-        "target_side": "AWAY",
-        "target_line": "+3",
-        "odds_dec": 1.81,
-        "recommended_bet": "Cincinnati Bengals +3",
-        "ev": 38.4
-    },
-    {
-        "id": "0636ebff776d43f8c829a36713c80b22",
-        "commence_time": "2026-09-20T17:00:00Z",
-        "away_team": "Cleveland Browns",
-        "home_team": "Tampa Bay Buccaneers",
-        "model_away_prob": 48.8,
-        "model_home_prob": 51.2,
-        "pinnacle_away_line": "Cleveland Browns +9",
-        "target_team": "Tampa Bay Buccaneers",
-        "target_side": "HOME",
-        "target_line": "-9",
-        "odds_dec": 2.05,
-        "recommended_bet": "Tampa Bay Buccaneers -9",
-        "ev": 4.9
-    },
-    {
-        "id": "4aeee070bb6ec60bdfae4dede61b9014",
-        "commence_time": "2026-09-20T17:00:00Z",
-        "away_team": "Green Bay Packers",
-        "home_team": "New York Jets",
-        "model_away_prob": 47.3,
-        "model_home_prob": 52.7,
-        "pinnacle_away_line": "Green Bay Packers -3",
-        "target_team": "New York Jets",
-        "target_side": "HOME",
-        "target_line": "+3",
-        "odds_dec": 2.0,
-        "recommended_bet": "New York Jets +3",
-        "ev": 5.4
-    },
-    {
-        "id": "9d14f87600f6edc74dbcb5c74edf6246",
-        "commence_time": "2026-09-20T17:00:00Z",
-        "away_team": "Pittsburgh Steelers",
-        "home_team": "New England Patriots",
-        "model_away_prob": 60.2,
-        "model_home_prob": 39.8,
-        "pinnacle_away_line": "Pittsburgh Steelers +5.5",
-        "target_team": "Pittsburgh Steelers",
-        "target_side": "AWAY",
-        "target_line": "+5.5",
-        "odds_dec": 1.91,
-        "recommended_bet": "Pittsburgh Steelers +5.5",
-        "ev": 15.0
-    },
-    {
-        "id": "fafc649c455e32a0f2ba1bd06e2039bc",
-        "commence_time": "2026-09-20T17:00:00Z",
-        "away_team": "Philadelphia Eagles",
-        "home_team": "Tennessee Titans",
-        "model_away_prob": 27.0,
-        "model_home_prob": 73.0,
-        "pinnacle_away_line": "Philadelphia Eagles -7.5",
-        "target_team": "Tennessee Titans",
-        "target_side": "HOME",
-        "target_line": "+7.5",
-        "odds_dec": 1.83,
-        "recommended_bet": "Tennessee Titans +7.5",
-        "ev": 33.7
-    },
-    {
-        "id": "1fd6628c781f556a7a19638e97d7107f",
-        "commence_time": "2026-09-20T20:05:00Z",
-        "away_team": "Jacksonville Jaguars",
-        "home_team": "Denver Broncos",
-        "model_away_prob": 53.0,
-        "model_home_prob": 46.9,
-        "pinnacle_away_line": "Jacksonville Jaguars +2.5",
-        "target_team": "Jacksonville Jaguars",
-        "target_side": "AWAY",
-        "target_line": "+2.5",
-        "odds_dec": 2.06,
-        "recommended_bet": "Jacksonville Jaguars +2.5",
-        "ev": 9.3
-    },
-    {
-        "id": "71b3b83747589efdc5baef2c5cf811bf",
-        "commence_time": "2026-09-20T20:05:00Z",
-        "away_team": "Las Vegas Raiders",
-        "home_team": "Los Angeles Chargers",
-        "model_away_prob": 58.3,
-        "model_home_prob": 41.7,
-        "pinnacle_away_line": "Las Vegas Raiders +6.5",
-        "target_team": "Las Vegas Raiders",
-        "target_side": "AWAY",
-        "target_line": "+6.5",
-        "odds_dec": 1.95,
-        "recommended_bet": "Las Vegas Raiders +6.5",
-        "ev": 13.7
-    },
-    {
-        "id": "4dd8020192a544385db42374e5555303",
-        "commence_time": "2026-09-20T20:25:00Z",
-        "away_team": "Seattle Seahawks",
-        "home_team": "Arizona Cardinals",
-        "model_away_prob": 24.2,
-        "model_home_prob": 75.8,
-        "pinnacle_away_line": "Seattle Seahawks -4",
-        "target_team": "Arizona Cardinals",
-        "target_side": "HOME",
-        "target_line": "+4",
-        "odds_dec": 1.91,
-        "recommended_bet": "Arizona Cardinals +4",
-        "ev": 44.8
-    },
-    {
-        "id": "85ef85098ddd22fe4ecf45e7e3c0a9c0",
-        "commence_time": "2026-09-20T20:25:00Z",
-        "away_team": "Washington Commanders",
-        "home_team": "Dallas Cowboys",
-        "model_away_prob": 45.3,
-        "model_home_prob": 54.7,
-        "pinnacle_away_line": "Washington Commanders +4",
-        "target_team": "Dallas Cowboys",
-        "target_side": "HOME",
-        "target_line": "-4",
-        "odds_dec": 1.94,
-        "recommended_bet": "Dallas Cowboys -4",
-        "ev": 6.2
-    },
-    {
-        "id": "68bc55903f50af4af4766adcc89fcc61",
-        "commence_time": "2026-09-20T20:25:00Z",
-        "away_team": "Miami Dolphins",
-        "home_team": "San Francisco 49ers",
-        "model_away_prob": 75.8,
-        "model_home_prob": 24.2,
-        "pinnacle_away_line": "Miami Dolphins +13.5",
-        "target_team": "Miami Dolphins",
-        "target_side": "AWAY",
-        "target_line": "+13.5",
-        "odds_dec": 1.88,
-        "recommended_bet": "Miami Dolphins +13.5",
-        "ev": 42.5
-    },
-    {
-        "id": "50bc247030707d823b9c3581d7eb5760",
-        "commence_time": "2026-09-21T00:20:00Z",
-        "away_team": "Indianapolis Colts",
-        "home_team": "Kansas City Chiefs",
-        "model_away_prob": 69.8,
-        "model_home_prob": 30.2,
-        "pinnacle_away_line": "Indianapolis Colts +7",
-        "target_team": "Indianapolis Colts",
-        "target_side": "AWAY",
-        "target_line": "+7",
-        "odds_dec": 1.81,
-        "recommended_bet": "Indianapolis Colts +7",
-        "ev": 26.2
-    },
-    {
-        "id": "32367f882fac1a0c20a6335619922025",
-        "commence_time": "2026-09-22T00:15:00Z",
-        "away_team": "New York Giants",
-        "home_team": "Los Angeles Rams",
-        "model_away_prob": 67.9,
-        "model_home_prob": 32.1,
-        "pinnacle_away_line": "New York Giants +7",
-        "target_team": "New York Giants",
-        "target_side": "AWAY",
-        "target_line": "+7",
-        "odds_dec": 1.99,
-        "recommended_bet": "New York Giants +7",
-        "ev": 35.1
-    }
-]
+    "todays_games": [
+        {
+            "away_team": "CAR",
+            "home_team": "ATL",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "B.Young",
+                "off_epa_per_play": -0.017351159326270432,
+                "off_pass_epa": -0.022725952243454087,
+                "off_rush_epa": -0.009288969950494944,
+                "def_epa_per_play": 0.12091422778494815,
+                "def_pass_epa": 0.15749679410711248,
+                "def_rush_epa": 0.08011702432277354,
+                "plays": 62,
+                "def_plays": 70,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "C.Rush",
+                "off_epa_per_play": -0.012349541383332092,
+                "off_pass_epa": -0.004937708070021851,
+                "off_rush_epa": -0.023467291353297455,
+                "def_epa_per_play": -0.04330760283383527,
+                "def_pass_epa": -0.0676702445861833,
+                "def_rush_epa": -0.00877948787362353,
+                "plays": 57,
+                "def_plays": 61,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 26.8,
+                "home_win_prob": 73.2,
+                "away_proj": 19.7,
+                "home_proj": 27.3,
+                "total_proj": 47.1,
+                "fair_spread": -7.6,
+                "fair_home_margin": 7.6,
+                "fair_away_ml": "+273",
+                "fair_home_ml": "-273"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": -146,
+                    "home": 129
+                },
+                "spreads": {
+                    "away": -115,
+                    "home": 103,
+                    "away_line": -2.5,
+                    "home_line": 2.5
+                },
+                "totals": {
+                    "over": -106,
+                    "under": -110,
+                    "total": 44.0
+                },
+                "away_ml_ev": -10.7,
+                "home_ml_ev": 7.6,
+                "away_sp_ev": -26.2,
+                "home_sp_ev": 22.8,
+                "over_ev": 4.7,
+                "under_ev": -8.0
+            }
+        },
+        {
+            "away_team": "NO",
+            "home_team": "BAL",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "T.Shough",
+                "off_epa_per_play": -0.031855520265465,
+                "off_pass_epa": -0.008624662041722544,
+                "off_rush_epa": -0.06670180760107869,
+                "def_epa_per_play": -0.04988164011981923,
+                "def_pass_epa": -0.03611187881398276,
+                "def_rush_epa": -0.06496944782141022,
+                "plays": 86,
+                "def_plays": 73,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "L.Jackson",
+                "off_epa_per_play": 0.04975681596564637,
+                "off_pass_epa": 0.02768627833867689,
+                "off_rush_epa": 0.08286262240610058,
+                "def_epa_per_play": -0.006066400417955246,
+                "def_pass_epa": 0.011499094515709948,
+                "def_rush_epa": -0.0315991828246885,
+                "plays": 60,
+                "def_plays": 53,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 42.8,
+                "home_win_prob": 57.2,
+                "away_proj": 20.7,
+                "home_proj": 22.8,
+                "total_proj": 43.5,
+                "fair_spread": -2.1,
+                "fair_home_margin": 2.1,
+                "fair_away_ml": "+134",
+                "fair_home_ml": "-134"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 330,
+                    "home": -411
+                },
+                "spreads": {
+                    "away": -115,
+                    "home": 102,
+                    "away_line": 9.0,
+                    "home_line": -9.0
+                },
+                "totals": {
+                    "over": -105,
+                    "under": -111,
+                    "total": 46.5
+                },
+                "away_ml_ev": 9.6,
+                "home_ml_ev": -7.3,
+                "away_sp_ev": 13.1,
+                "home_sp_ev": -16.4,
+                "over_ev": -8.9,
+                "under_ev": 1.4
+            }
+        },
+        {
+            "away_team": "MIN",
+            "home_team": "CHI",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "C.Wentz",
+                "off_epa_per_play": -0.06357392400757671,
+                "off_pass_epa": -0.09895605304805163,
+                "off_rush_epa": -0.010500730446864314,
+                "def_epa_per_play": -0.1102715385100571,
+                "def_pass_epa": -0.1352646851740634,
+                "def_rush_epa": -0.10709766568157351,
+                "plays": 59,
+                "def_plays": 67,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "C.Williams",
+                "off_epa_per_play": 0.06828963944634288,
+                "off_pass_epa": 0.07576748771489941,
+                "off_rush_epa": 0.05707286704350806,
+                "def_epa_per_play": 0.05152106297996653,
+                "def_pass_epa": 0.08239317920816924,
+                "def_rush_epa": 0.00627547682331496,
+                "plays": 70,
+                "def_plays": 62,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 52.9,
+                "home_win_prob": 47.1,
+                "away_proj": 21.8,
+                "home_proj": 21.1,
+                "total_proj": 42.8,
+                "fair_spread": 0.7,
+                "fair_home_margin": -0.7,
+                "fair_away_ml": "-112",
+                "fair_home_ml": "+112"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 184,
+                    "home": -213
+                },
+                "spreads": {
+                    "away": -124,
+                    "home": 110,
+                    "away_line": 5.5,
+                    "home_line": -5.5
+                },
+                "totals": {
+                    "over": 101,
+                    "under": -118,
+                    "total": 48.5
+                },
+                "away_ml_ev": 4.8,
+                "home_ml_ev": -7.3,
+                "away_sp_ev": 8.8,
+                "home_sp_ev": -16.5,
+                "over_ev": -12.7,
+                "under_ev": 4.5
+            }
+        },
+        {
+            "away_team": "CIN",
+            "home_team": "HOU",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "J.Burrow",
+                "off_epa_per_play": 0.045938381445448914,
+                "off_pass_epa": 0.062459648869217,
+                "off_rush_epa": 0.0211564803097968,
+                "def_epa_per_play": 0.09419304360439403,
+                "def_pass_epa": 0.11811877512878961,
+                "def_rush_epa": 0.06793252289493439,
+                "plays": 62,
+                "def_plays": 51,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "C.Stroud",
+                "off_epa_per_play": -0.00045040764232076504,
+                "off_pass_epa": 0.028323933309317866,
+                "off_rush_epa": -0.0436119190697787,
+                "def_epa_per_play": -0.11585794191444869,
+                "def_pass_epa": -0.139706341038763,
+                "def_rush_epa": -0.08323591631070702,
+                "plays": 73,
+                "def_plays": 52,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 27.6,
+                "home_win_prob": 72.4,
+                "away_proj": 19.3,
+                "home_proj": 26.7,
+                "total_proj": 46.1,
+                "fair_spread": -7.4,
+                "fair_home_margin": 7.4,
+                "fair_away_ml": "+262",
+                "fair_home_ml": "-262"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 131,
+                    "home": -149
+                },
+                "spreads": {
+                    "away": -124,
+                    "home": 110,
+                    "away_line": 3.0,
+                    "home_line": -3.0
+                },
+                "totals": {
+                    "over": -111,
+                    "under": -105,
+                    "total": 45.5
+                },
+                "away_ml_ev": -8.0,
+                "home_ml_ev": 0.6,
+                "away_sp_ev": -13.8,
+                "home_sp_ev": 13.6,
+                "over_ev": -2.5,
+                "under_ev": -4.9
+            }
+        },
+        {
+            "away_team": "CLE",
+            "home_team": "TB",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "D.Watson",
+                "off_epa_per_play": -0.10894433038749833,
+                "off_pass_epa": -0.16000434713083814,
+                "off_rush_epa": -0.03235430527248863,
+                "def_epa_per_play": -0.045061060266515796,
+                "def_pass_epa": -0.023393029935049436,
+                "def_rush_epa": -0.051597017868859875,
+                "plays": 49,
+                "def_plays": 53,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "B.Mayfield",
+                "off_epa_per_play": 0.002453594764757575,
+                "off_pass_epa": -0.00270386317261816,
+                "off_rush_epa": 0.010189781670821177,
+                "def_epa_per_play": 0.011287182770584794,
+                "def_pass_epa": 0.04910801580070934,
+                "def_rush_epa": -0.049620038374161825,
+                "plays": 51,
+                "def_plays": 62,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 41.6,
+                "home_win_prob": 58.4,
+                "away_proj": 18.2,
+                "home_proj": 21.0,
+                "total_proj": 39.2,
+                "fair_spread": -2.8,
+                "fair_home_margin": 2.8,
+                "fair_away_ml": "+141",
+                "fair_home_ml": "-141"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 327,
+                    "home": -407
+                },
+                "spreads": {
+                    "away": -118,
+                    "home": 105,
+                    "away_line": 9.0,
+                    "home_line": -9.0
+                },
+                "totals": {
+                    "over": 101,
+                    "under": -117,
+                    "total": 42.0
+                },
+                "away_ml_ev": 8.6,
+                "home_ml_ev": -7.1,
+                "away_sp_ev": 11.4,
+                "home_sp_ev": -15.2,
+                "over_ev": -5.6,
+                "under_ev": 1.6
+            }
+        },
+        {
+            "away_team": "GB",
+            "home_team": "NYJ",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "J.Love",
+                "off_epa_per_play": 0.09591891212801394,
+                "off_pass_epa": 0.17266511170559676,
+                "off_rush_epa": -0.019200387238360275,
+                "def_epa_per_play": 0.03152160022269796,
+                "def_pass_epa": 0.08132683841231601,
+                "def_rush_epa": -0.029730101320933153,
+                "plays": 67,
+                "def_plays": 59,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "G.Smith",
+                "off_epa_per_play": -0.03624738507016658,
+                "off_pass_epa": -0.03274274031059167,
+                "off_rush_epa": -0.04150435220952894,
+                "def_epa_per_play": 0.1182084685411379,
+                "def_pass_epa": 0.20281020726154003,
+                "def_rush_epa": 0.04283301065984972,
+                "plays": 60,
+                "def_plays": 49,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 75.6,
+                "home_win_prob": 24.4,
+                "away_proj": 31.2,
+                "home_proj": 22.6,
+                "total_proj": 53.8,
+                "fair_spread": 8.5,
+                "fair_home_margin": -8.5,
+                "fair_away_ml": "-310",
+                "fair_home_ml": "+310"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": -170,
+                    "home": 149
+                },
+                "spreads": {
+                    "away": -113,
+                    "home": 100,
+                    "away_line": -3.0,
+                    "home_line": 3.0
+                },
+                "totals": {
+                    "over": -102,
+                    "under": -114,
+                    "total": 45.0
+                },
+                "away_ml_ev": 0.4,
+                "home_ml_ev": -8.5,
+                "away_sp_ev": 10.9,
+                "home_sp_ev": -14.5,
+                "over_ev": 14.7,
+                "under_ev": -18.0
+            }
+        },
+        {
+            "away_team": "PIT",
+            "home_team": "NE",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "A.Rodgers",
+                "off_epa_per_play": -0.008693768888366794,
+                "off_pass_epa": -0.015030630687415444,
+                "off_rush_epa": 0.0008115238102061838,
+                "def_epa_per_play": -0.02103503703810193,
+                "def_pass_epa": -0.051516722406808865,
+                "def_rush_epa": 0.0013154953294301185,
+                "plays": 61,
+                "def_plays": 57,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "D.Maye",
+                "off_epa_per_play": 0.07514637373967288,
+                "off_pass_epa": 0.12712568668819474,
+                "off_rush_epa": -0.0028225956831099248,
+                "def_epa_per_play": -0.07446538743623418,
+                "def_pass_epa": -0.08638741312677695,
+                "def_rush_epa": -0.05529272202110664,
+                "plays": 67,
+                "def_plays": 47,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 30.8,
+                "home_win_prob": 69.2,
+                "away_proj": 18.8,
+                "home_proj": 25.1,
+                "total_proj": 43.9,
+                "fair_spread": -6.3,
+                "fair_home_margin": 6.3,
+                "fair_away_ml": "+225",
+                "fair_home_ml": "-225"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 203,
+                    "home": -237
+                },
+                "spreads": {
+                    "away": -110,
+                    "home": -102,
+                    "away_line": 5.5,
+                    "home_line": -5.5
+                },
+                "totals": {
+                    "over": 102,
+                    "under": -119,
+                    "total": 42.0
+                },
+                "away_ml_ev": -3.7,
+                "home_ml_ev": -3.0,
+                "away_sp_ev": -5.6,
+                "home_sp_ev": 0.1,
+                "over_ev": 3.2,
+                "under_ev": -6.6
+            }
+        },
+        {
+            "away_team": "PHI",
+            "home_team": "TEN",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "J.Hurts",
+                "off_epa_per_play": 0.025334715369561105,
+                "off_pass_epa": 0.037016938050452176,
+                "off_rush_epa": 0.007811381348224497,
+                "def_epa_per_play": -0.0511259045292679,
+                "def_pass_epa": -0.07381021549813767,
+                "def_rush_epa": -0.022916596653497115,
+                "plays": 51,
+                "def_plays": 68,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "C.Ward",
+                "off_epa_per_play": -0.09569521377618127,
+                "off_pass_epa": -0.13455425299836082,
+                "off_rush_epa": -0.03740665494291198,
+                "def_epa_per_play": 0.11008550161900728,
+                "def_pass_epa": 0.19848346191903818,
+                "def_rush_epa": 0.015656612368057602,
+                "plays": 49,
+                "def_plays": 60,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 82.0,
+                "home_win_prob": 18.0,
+                "away_proj": 27.9,
+                "home_proj": 16.7,
+                "total_proj": 44.6,
+                "fair_spread": 11.2,
+                "fair_home_margin": -11.2,
+                "fair_away_ml": "-456",
+                "fair_home_ml": "+456"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": -331,
+                    "home": 274
+                },
+                "spreads": {
+                    "away": 107,
+                    "home": -120,
+                    "away_line": -7.5,
+                    "home_line": 7.5
+                },
+                "totals": {
+                    "over": -104,
+                    "under": -113,
+                    "total": 40.0
+                },
+                "away_ml_ev": -1.9,
+                "home_ml_ev": -7.8,
+                "away_sp_ev": 9.4,
+                "home_sp_ev": -13.5,
+                "over_ev": 7.0,
+                "under_ev": -11.0
+            }
+        },
+        {
+            "away_team": "JAX",
+            "home_team": "DEN",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T20:05:00Z",
+            "away_stats": {
+                "primary_qb": "T.Lawrence",
+                "off_epa_per_play": 0.0337901393361094,
+                "off_pass_epa": 0.057137176673953474,
+                "off_rush_epa": -0.0012304166706567123,
+                "def_epa_per_play": -0.09687414201171467,
+                "def_pass_epa": -0.1461109696225759,
+                "def_rush_epa": -0.018137741767550362,
+                "plays": 53,
+                "def_plays": 49,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "B.Nix",
+                "off_epa_per_play": 0.03595014202707573,
+                "off_pass_epa": 0.06353988161905513,
+                "off_rush_epa": -0.005434467360893381,
+                "def_epa_per_play": -0.045646534911517433,
+                "def_pass_epa": -0.10796494910429263,
+                "def_rush_epa": 0.02672379226263227,
+                "plays": 46,
+                "def_plays": 64,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 53.3,
+                "home_win_prob": 46.7,
+                "away_proj": 21.8,
+                "home_proj": 20.3,
+                "total_proj": 42.0,
+                "fair_spread": 1.5,
+                "fair_home_margin": -1.5,
+                "fair_away_ml": "-114",
+                "fair_home_ml": "+114"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 135,
+                    "home": -153
+                },
+                "spreads": {
+                    "away": 106,
+                    "home": -119,
+                    "away_line": 2.5,
+                    "home_line": -2.5
+                },
+                "totals": {
+                    "over": -107,
+                    "under": -109,
+                    "total": 45.5
+                },
+                "away_ml_ev": 1.3,
+                "home_ml_ev": -5.9,
+                "away_sp_ev": 8.8,
+                "home_sp_ev": -13.2,
+                "over_ev": -10.0,
+                "under_ev": 2.6
+            }
+        },
+        {
+            "away_team": "LV",
+            "home_team": "LAC",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T20:05:00Z",
+            "away_stats": {
+                "primary_qb": "K.Cousins",
+                "off_epa_per_play": -0.12470407678730357,
+                "off_pass_epa": -0.08947939989713492,
+                "off_rush_epa": -0.1775410921225566,
+                "def_epa_per_play": -0.004647314548492432,
+                "def_pass_epa": 0.03631309668223063,
+                "def_rush_epa": -0.04772523045539856,
+                "plays": 64,
+                "def_plays": 50,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "J.Herbert",
+                "off_epa_per_play": -0.002307838032389916,
+                "off_pass_epa": -0.007595213532424515,
+                "off_rush_epa": 0.005623225217661985,
+                "def_epa_per_play": -0.04613159453945119,
+                "def_pass_epa": -0.04117106660596852,
+                "def_rush_epa": -0.05111221894065835,
+                "plays": 51,
+                "def_plays": 69,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 27.5,
+                "home_win_prob": 72.5,
+                "away_proj": 15.2,
+                "home_proj": 22.5,
+                "total_proj": 37.7,
+                "fair_spread": -7.4,
+                "fair_home_margin": 7.4,
+                "fair_away_ml": "+264",
+                "fair_home_ml": "-264"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 247,
+                    "home": -295
+                },
+                "spreads": {
+                    "away": -104,
+                    "home": -108,
+                    "away_line": 6.5,
+                    "home_line": -6.5
+                },
+                "totals": {
+                    "over": -109,
+                    "under": -107,
+                    "total": 43.0
+                },
+                "away_ml_ev": -3.6,
+                "home_ml_ev": -3.3,
+                "away_sp_ev": -5.6,
+                "home_sp_ev": -0.1,
+                "over_ev": -11.3,
+                "under_ev": 7.6
+            }
+        },
+        {
+            "away_team": "SEA",
+            "home_team": "ARI",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T20:25:00Z",
+            "away_stats": {
+                "primary_qb": "D.Lock",
+                "off_epa_per_play": 0.054021483968748264,
+                "off_pass_epa": 0.11374152992234597,
+                "off_rush_epa": -0.03555858496164827,
+                "def_epa_per_play": -0.12093509532654821,
+                "def_pass_epa": -0.11689451304952389,
+                "def_rush_epa": -0.12864742081859637,
+                "plays": 47,
+                "def_plays": 67,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "J.Brissett",
+                "off_epa_per_play": -0.010775704029124764,
+                "off_pass_epa": 0.0064497793308506786,
+                "off_rush_epa": -0.036613929069087926,
+                "def_epa_per_play": 0.05085312302519635,
+                "def_pass_epa": 0.11181234527057134,
+                "def_rush_epa": -0.029725195431127782,
+                "plays": 69,
+                "def_plays": 51,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 77.2,
+                "home_win_prob": 22.8,
+                "away_proj": 26.6,
+                "home_proj": 17.3,
+                "total_proj": 44.0,
+                "fair_spread": 9.3,
+                "fair_home_margin": -9.3,
+                "fair_away_ml": "-338",
+                "fair_home_ml": "+338"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": -198,
+                    "home": 172
+                },
+                "spreads": {
+                    "away": -102,
+                    "home": -110,
+                    "away_line": -4.0,
+                    "home_line": 4.0
+                },
+                "totals": {
+                    "over": 101,
+                    "under": -118,
+                    "total": 41.5
+                },
+                "away_ml_ev": -0.2,
+                "home_ml_ev": -8.3,
+                "away_sp_ev": 12.7,
+                "home_sp_ev": -14.3,
+                "over_ev": 2.4,
+                "under_ev": -9.4
+            }
+        },
+        {
+            "away_team": "WAS",
+            "home_team": "DAL",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T20:25:00Z",
+            "away_stats": {
+                "primary_qb": "J.Daniels",
+                "off_epa_per_play": 0.011258497063541897,
+                "off_pass_epa": 0.00823605863960112,
+                "off_rush_epa": 0.015792154699453064,
+                "def_epa_per_play": 0.13515726073816453,
+                "def_pass_epa": 0.18330121119640885,
+                "def_rush_epa": 0.07795547193407748,
+                "plays": 68,
+                "def_plays": 51,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "D.Prescott",
+                "off_epa_per_play": 0.0815731829624811,
+                "off_pass_epa": 0.13174447486753685,
+                "off_rush_epa": 0.006316245104897509,
+                "def_epa_per_play": 0.19555330148307226,
+                "def_pass_epa": 0.28856235806659986,
+                "def_rush_epa": 0.08994623762305065,
+                "plays": 52,
+                "def_plays": 65,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 46.5,
+                "home_win_prob": 53.5,
+                "away_proj": 30.9,
+                "home_proj": 31.8,
+                "total_proj": 62.7,
+                "fair_spread": -1.0,
+                "fair_home_margin": 1.0,
+                "fair_away_ml": "+115",
+                "fair_home_ml": "-115"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 175,
+                    "home": -202
+                },
+                "spreads": {
+                    "away": -106,
+                    "home": -106,
+                    "away_line": 4.0,
+                    "home_line": -4.0
+                },
+                "totals": {
+                    "over": -121,
+                    "under": 103,
+                    "total": 50.0
+                },
+                "away_ml_ev": 1.5,
+                "home_ml_ev": -5.7,
+                "away_sp_ev": 6.2,
+                "home_sp_ev": -8.5,
+                "over_ev": 15.9,
+                "under_ev": -22.9
+            }
+        },
+        {
+            "away_team": "MIA",
+            "home_team": "SF",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T20:25:00Z",
+            "away_stats": {
+                "primary_qb": "M.Willis",
+                "off_epa_per_play": 0.00045222420281534545,
+                "off_pass_epa": 0.013871224872245522,
+                "off_rush_epa": -0.01967627680132991,
+                "def_epa_per_play": 0.07064022457805173,
+                "def_pass_epa": 0.11005335853531442,
+                "def_rush_epa": 0.025508193363403448,
+                "plays": 50,
+                "def_plays": 64,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "B.Purdy",
+                "off_epa_per_play": 0.05026711476465238,
+                "off_pass_epa": 0.08894198164116478,
+                "off_rush_epa": -0.007745185550116199,
+                "def_epa_per_play": 0.0287838931146421,
+                "def_pass_epa": 0.04447904647442334,
+                "def_rush_epa": 0.0018300446763373258,
+                "plays": 64,
+                "def_plays": 56,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 36.1,
+                "home_win_prob": 63.9,
+                "away_proj": 23.5,
+                "home_proj": 27.8,
+                "total_proj": 51.3,
+                "fair_spread": -4.4,
+                "fair_home_margin": 4.4,
+                "fair_away_ml": "+177",
+                "fair_home_ml": "-177"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 681,
+                    "home": -1008
+                },
+                "spreads": {
+                    "away": -113,
+                    "home": 100,
+                    "away_line": 13.5,
+                    "home_line": -13.5
+                },
+                "totals": {
+                    "over": 102,
+                    "under": -119,
+                    "total": 45.5
+                },
+                "away_ml_ev": 24.2,
+                "home_ml_ev": -7.6,
+                "away_sp_ev": 16.5,
+                "home_sp_ev": -23.6,
+                "over_ev": 9.2,
+                "under_ev": -15.5
+            }
+        },
+        {
+            "away_team": "IND",
+            "home_team": "KC",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-21T00:20:00Z",
+            "away_stats": {
+                "primary_qb": "D.Jones",
+                "off_epa_per_play": 0.0809752611810566,
+                "off_pass_epa": 0.08738189548060377,
+                "off_rush_epa": 0.07136530973173588,
+                "def_epa_per_play": 0.045644273900467415,
+                "def_pass_epa": 0.08366840948229251,
+                "def_rush_epa": -0.006761626057002854,
+                "plays": 53,
+                "def_plays": 60,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "P.Mahomes",
+                "off_epa_per_play": 0.06829810799361712,
+                "off_pass_epa": 0.0913275123796589,
+                "off_rush_epa": 0.03375400141455445,
+                "def_epa_per_play": -0.05264070382834551,
+                "def_pass_epa": -0.04669808023379523,
+                "def_rush_epa": -0.048938006730624914,
+                "plays": 64,
+                "def_plays": 46,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 37.1,
+                "home_win_prob": 62.9,
+                "away_proj": 23.4,
+                "home_proj": 27.6,
+                "total_proj": 51.0,
+                "fair_spread": -4.1,
+                "fair_home_margin": 4.1,
+                "fair_away_ml": "+169",
+                "fair_home_ml": "-169"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 244,
+                    "home": -290
+                },
+                "spreads": {
+                    "away": -121,
+                    "home": 108,
+                    "away_line": 7.0,
+                    "home_line": -7.0
+                },
+                "totals": {
+                    "over": 101,
+                    "under": -118,
+                    "total": 47.0
+                },
+                "away_ml_ev": 1.3,
+                "home_ml_ev": -5.1,
+                "away_sp_ev": 3.5,
+                "home_sp_ev": -5.7,
+                "over_ev": 7.0,
+                "under_ev": -10.1
+            }
+        }
+    ],
+    "games": [
+        {
+            "away_team": "CAR",
+            "home_team": "ATL",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "B.Young",
+                "off_epa_per_play": -0.017351159326270432,
+                "off_pass_epa": -0.022725952243454087,
+                "off_rush_epa": -0.009288969950494944,
+                "def_epa_per_play": 0.12091422778494815,
+                "def_pass_epa": 0.15749679410711248,
+                "def_rush_epa": 0.08011702432277354,
+                "plays": 62,
+                "def_plays": 70,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "C.Rush",
+                "off_epa_per_play": -0.012349541383332092,
+                "off_pass_epa": -0.004937708070021851,
+                "off_rush_epa": -0.023467291353297455,
+                "def_epa_per_play": -0.04330760283383527,
+                "def_pass_epa": -0.0676702445861833,
+                "def_rush_epa": -0.00877948787362353,
+                "plays": 57,
+                "def_plays": 61,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 26.8,
+                "home_win_prob": 73.2,
+                "away_proj": 19.7,
+                "home_proj": 27.3,
+                "total_proj": 47.1,
+                "fair_spread": -7.6,
+                "fair_home_margin": 7.6,
+                "fair_away_ml": "+273",
+                "fair_home_ml": "-273"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": -146,
+                    "home": 129
+                },
+                "spreads": {
+                    "away": -115,
+                    "home": 103,
+                    "away_line": -2.5,
+                    "home_line": 2.5
+                },
+                "totals": {
+                    "over": -106,
+                    "under": -110,
+                    "total": 44.0
+                },
+                "away_ml_ev": -10.7,
+                "home_ml_ev": 7.6,
+                "away_sp_ev": -26.2,
+                "home_sp_ev": 22.8,
+                "over_ev": 4.7,
+                "under_ev": -8.0
+            }
+        },
+        {
+            "away_team": "NO",
+            "home_team": "BAL",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "T.Shough",
+                "off_epa_per_play": -0.031855520265465,
+                "off_pass_epa": -0.008624662041722544,
+                "off_rush_epa": -0.06670180760107869,
+                "def_epa_per_play": -0.04988164011981923,
+                "def_pass_epa": -0.03611187881398276,
+                "def_rush_epa": -0.06496944782141022,
+                "plays": 86,
+                "def_plays": 73,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "L.Jackson",
+                "off_epa_per_play": 0.04975681596564637,
+                "off_pass_epa": 0.02768627833867689,
+                "off_rush_epa": 0.08286262240610058,
+                "def_epa_per_play": -0.006066400417955246,
+                "def_pass_epa": 0.011499094515709948,
+                "def_rush_epa": -0.0315991828246885,
+                "plays": 60,
+                "def_plays": 53,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 42.8,
+                "home_win_prob": 57.2,
+                "away_proj": 20.7,
+                "home_proj": 22.8,
+                "total_proj": 43.5,
+                "fair_spread": -2.1,
+                "fair_home_margin": 2.1,
+                "fair_away_ml": "+134",
+                "fair_home_ml": "-134"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 330,
+                    "home": -411
+                },
+                "spreads": {
+                    "away": -115,
+                    "home": 102,
+                    "away_line": 9.0,
+                    "home_line": -9.0
+                },
+                "totals": {
+                    "over": -105,
+                    "under": -111,
+                    "total": 46.5
+                },
+                "away_ml_ev": 9.6,
+                "home_ml_ev": -7.3,
+                "away_sp_ev": 13.1,
+                "home_sp_ev": -16.4,
+                "over_ev": -8.9,
+                "under_ev": 1.4
+            }
+        },
+        {
+            "away_team": "MIN",
+            "home_team": "CHI",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "C.Wentz",
+                "off_epa_per_play": -0.06357392400757671,
+                "off_pass_epa": -0.09895605304805163,
+                "off_rush_epa": -0.010500730446864314,
+                "def_epa_per_play": -0.1102715385100571,
+                "def_pass_epa": -0.1352646851740634,
+                "def_rush_epa": -0.10709766568157351,
+                "plays": 59,
+                "def_plays": 67,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "C.Williams",
+                "off_epa_per_play": 0.06828963944634288,
+                "off_pass_epa": 0.07576748771489941,
+                "off_rush_epa": 0.05707286704350806,
+                "def_epa_per_play": 0.05152106297996653,
+                "def_pass_epa": 0.08239317920816924,
+                "def_rush_epa": 0.00627547682331496,
+                "plays": 70,
+                "def_plays": 62,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 52.9,
+                "home_win_prob": 47.1,
+                "away_proj": 21.8,
+                "home_proj": 21.1,
+                "total_proj": 42.8,
+                "fair_spread": 0.7,
+                "fair_home_margin": -0.7,
+                "fair_away_ml": "-112",
+                "fair_home_ml": "+112"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 184,
+                    "home": -213
+                },
+                "spreads": {
+                    "away": -124,
+                    "home": 110,
+                    "away_line": 5.5,
+                    "home_line": -5.5
+                },
+                "totals": {
+                    "over": 101,
+                    "under": -118,
+                    "total": 48.5
+                },
+                "away_ml_ev": 4.8,
+                "home_ml_ev": -7.3,
+                "away_sp_ev": 8.8,
+                "home_sp_ev": -16.5,
+                "over_ev": -12.7,
+                "under_ev": 4.5
+            }
+        },
+        {
+            "away_team": "CIN",
+            "home_team": "HOU",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "J.Burrow",
+                "off_epa_per_play": 0.045938381445448914,
+                "off_pass_epa": 0.062459648869217,
+                "off_rush_epa": 0.0211564803097968,
+                "def_epa_per_play": 0.09419304360439403,
+                "def_pass_epa": 0.11811877512878961,
+                "def_rush_epa": 0.06793252289493439,
+                "plays": 62,
+                "def_plays": 51,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "C.Stroud",
+                "off_epa_per_play": -0.00045040764232076504,
+                "off_pass_epa": 0.028323933309317866,
+                "off_rush_epa": -0.0436119190697787,
+                "def_epa_per_play": -0.11585794191444869,
+                "def_pass_epa": -0.139706341038763,
+                "def_rush_epa": -0.08323591631070702,
+                "plays": 73,
+                "def_plays": 52,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 27.6,
+                "home_win_prob": 72.4,
+                "away_proj": 19.3,
+                "home_proj": 26.7,
+                "total_proj": 46.1,
+                "fair_spread": -7.4,
+                "fair_home_margin": 7.4,
+                "fair_away_ml": "+262",
+                "fair_home_ml": "-262"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 131,
+                    "home": -149
+                },
+                "spreads": {
+                    "away": -124,
+                    "home": 110,
+                    "away_line": 3.0,
+                    "home_line": -3.0
+                },
+                "totals": {
+                    "over": -111,
+                    "under": -105,
+                    "total": 45.5
+                },
+                "away_ml_ev": -8.0,
+                "home_ml_ev": 0.6,
+                "away_sp_ev": -13.8,
+                "home_sp_ev": 13.6,
+                "over_ev": -2.5,
+                "under_ev": -4.9
+            }
+        },
+        {
+            "away_team": "CLE",
+            "home_team": "TB",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "D.Watson",
+                "off_epa_per_play": -0.10894433038749833,
+                "off_pass_epa": -0.16000434713083814,
+                "off_rush_epa": -0.03235430527248863,
+                "def_epa_per_play": -0.045061060266515796,
+                "def_pass_epa": -0.023393029935049436,
+                "def_rush_epa": -0.051597017868859875,
+                "plays": 49,
+                "def_plays": 53,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "B.Mayfield",
+                "off_epa_per_play": 0.002453594764757575,
+                "off_pass_epa": -0.00270386317261816,
+                "off_rush_epa": 0.010189781670821177,
+                "def_epa_per_play": 0.011287182770584794,
+                "def_pass_epa": 0.04910801580070934,
+                "def_rush_epa": -0.049620038374161825,
+                "plays": 51,
+                "def_plays": 62,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 41.6,
+                "home_win_prob": 58.4,
+                "away_proj": 18.2,
+                "home_proj": 21.0,
+                "total_proj": 39.2,
+                "fair_spread": -2.8,
+                "fair_home_margin": 2.8,
+                "fair_away_ml": "+141",
+                "fair_home_ml": "-141"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 327,
+                    "home": -407
+                },
+                "spreads": {
+                    "away": -118,
+                    "home": 105,
+                    "away_line": 9.0,
+                    "home_line": -9.0
+                },
+                "totals": {
+                    "over": 101,
+                    "under": -117,
+                    "total": 42.0
+                },
+                "away_ml_ev": 8.6,
+                "home_ml_ev": -7.1,
+                "away_sp_ev": 11.4,
+                "home_sp_ev": -15.2,
+                "over_ev": -5.6,
+                "under_ev": 1.6
+            }
+        },
+        {
+            "away_team": "GB",
+            "home_team": "NYJ",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "J.Love",
+                "off_epa_per_play": 0.09591891212801394,
+                "off_pass_epa": 0.17266511170559676,
+                "off_rush_epa": -0.019200387238360275,
+                "def_epa_per_play": 0.03152160022269796,
+                "def_pass_epa": 0.08132683841231601,
+                "def_rush_epa": -0.029730101320933153,
+                "plays": 67,
+                "def_plays": 59,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "G.Smith",
+                "off_epa_per_play": -0.03624738507016658,
+                "off_pass_epa": -0.03274274031059167,
+                "off_rush_epa": -0.04150435220952894,
+                "def_epa_per_play": 0.1182084685411379,
+                "def_pass_epa": 0.20281020726154003,
+                "def_rush_epa": 0.04283301065984972,
+                "plays": 60,
+                "def_plays": 49,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 75.6,
+                "home_win_prob": 24.4,
+                "away_proj": 31.2,
+                "home_proj": 22.6,
+                "total_proj": 53.8,
+                "fair_spread": 8.5,
+                "fair_home_margin": -8.5,
+                "fair_away_ml": "-310",
+                "fair_home_ml": "+310"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": -170,
+                    "home": 149
+                },
+                "spreads": {
+                    "away": -113,
+                    "home": 100,
+                    "away_line": -3.0,
+                    "home_line": 3.0
+                },
+                "totals": {
+                    "over": -102,
+                    "under": -114,
+                    "total": 45.0
+                },
+                "away_ml_ev": 0.4,
+                "home_ml_ev": -8.5,
+                "away_sp_ev": 10.9,
+                "home_sp_ev": -14.5,
+                "over_ev": 14.7,
+                "under_ev": -18.0
+            }
+        },
+        {
+            "away_team": "PIT",
+            "home_team": "NE",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "A.Rodgers",
+                "off_epa_per_play": -0.008693768888366794,
+                "off_pass_epa": -0.015030630687415444,
+                "off_rush_epa": 0.0008115238102061838,
+                "def_epa_per_play": -0.02103503703810193,
+                "def_pass_epa": -0.051516722406808865,
+                "def_rush_epa": 0.0013154953294301185,
+                "plays": 61,
+                "def_plays": 57,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "D.Maye",
+                "off_epa_per_play": 0.07514637373967288,
+                "off_pass_epa": 0.12712568668819474,
+                "off_rush_epa": -0.0028225956831099248,
+                "def_epa_per_play": -0.07446538743623418,
+                "def_pass_epa": -0.08638741312677695,
+                "def_rush_epa": -0.05529272202110664,
+                "plays": 67,
+                "def_plays": 47,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 30.8,
+                "home_win_prob": 69.2,
+                "away_proj": 18.8,
+                "home_proj": 25.1,
+                "total_proj": 43.9,
+                "fair_spread": -6.3,
+                "fair_home_margin": 6.3,
+                "fair_away_ml": "+225",
+                "fair_home_ml": "-225"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 203,
+                    "home": -237
+                },
+                "spreads": {
+                    "away": -110,
+                    "home": -102,
+                    "away_line": 5.5,
+                    "home_line": -5.5
+                },
+                "totals": {
+                    "over": 102,
+                    "under": -119,
+                    "total": 42.0
+                },
+                "away_ml_ev": -3.7,
+                "home_ml_ev": -3.0,
+                "away_sp_ev": -5.6,
+                "home_sp_ev": 0.1,
+                "over_ev": 3.2,
+                "under_ev": -6.6
+            }
+        },
+        {
+            "away_team": "PHI",
+            "home_team": "TEN",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T17:00:00Z",
+            "away_stats": {
+                "primary_qb": "J.Hurts",
+                "off_epa_per_play": 0.025334715369561105,
+                "off_pass_epa": 0.037016938050452176,
+                "off_rush_epa": 0.007811381348224497,
+                "def_epa_per_play": -0.0511259045292679,
+                "def_pass_epa": -0.07381021549813767,
+                "def_rush_epa": -0.022916596653497115,
+                "plays": 51,
+                "def_plays": 68,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "C.Ward",
+                "off_epa_per_play": -0.09569521377618127,
+                "off_pass_epa": -0.13455425299836082,
+                "off_rush_epa": -0.03740665494291198,
+                "def_epa_per_play": 0.11008550161900728,
+                "def_pass_epa": 0.19848346191903818,
+                "def_rush_epa": 0.015656612368057602,
+                "plays": 49,
+                "def_plays": 60,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 82.0,
+                "home_win_prob": 18.0,
+                "away_proj": 27.9,
+                "home_proj": 16.7,
+                "total_proj": 44.6,
+                "fair_spread": 11.2,
+                "fair_home_margin": -11.2,
+                "fair_away_ml": "-456",
+                "fair_home_ml": "+456"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": -331,
+                    "home": 274
+                },
+                "spreads": {
+                    "away": 107,
+                    "home": -120,
+                    "away_line": -7.5,
+                    "home_line": 7.5
+                },
+                "totals": {
+                    "over": -104,
+                    "under": -113,
+                    "total": 40.0
+                },
+                "away_ml_ev": -1.9,
+                "home_ml_ev": -7.8,
+                "away_sp_ev": 9.4,
+                "home_sp_ev": -13.5,
+                "over_ev": 7.0,
+                "under_ev": -11.0
+            }
+        },
+        {
+            "away_team": "JAX",
+            "home_team": "DEN",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T20:05:00Z",
+            "away_stats": {
+                "primary_qb": "T.Lawrence",
+                "off_epa_per_play": 0.0337901393361094,
+                "off_pass_epa": 0.057137176673953474,
+                "off_rush_epa": -0.0012304166706567123,
+                "def_epa_per_play": -0.09687414201171467,
+                "def_pass_epa": -0.1461109696225759,
+                "def_rush_epa": -0.018137741767550362,
+                "plays": 53,
+                "def_plays": 49,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "B.Nix",
+                "off_epa_per_play": 0.03595014202707573,
+                "off_pass_epa": 0.06353988161905513,
+                "off_rush_epa": -0.005434467360893381,
+                "def_epa_per_play": -0.045646534911517433,
+                "def_pass_epa": -0.10796494910429263,
+                "def_rush_epa": 0.02672379226263227,
+                "plays": 46,
+                "def_plays": 64,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 53.3,
+                "home_win_prob": 46.7,
+                "away_proj": 21.8,
+                "home_proj": 20.3,
+                "total_proj": 42.0,
+                "fair_spread": 1.5,
+                "fair_home_margin": -1.5,
+                "fair_away_ml": "-114",
+                "fair_home_ml": "+114"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 135,
+                    "home": -153
+                },
+                "spreads": {
+                    "away": 106,
+                    "home": -119,
+                    "away_line": 2.5,
+                    "home_line": -2.5
+                },
+                "totals": {
+                    "over": -107,
+                    "under": -109,
+                    "total": 45.5
+                },
+                "away_ml_ev": 1.3,
+                "home_ml_ev": -5.9,
+                "away_sp_ev": 8.8,
+                "home_sp_ev": -13.2,
+                "over_ev": -10.0,
+                "under_ev": 2.6
+            }
+        },
+        {
+            "away_team": "LV",
+            "home_team": "LAC",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T20:05:00Z",
+            "away_stats": {
+                "primary_qb": "K.Cousins",
+                "off_epa_per_play": -0.12470407678730357,
+                "off_pass_epa": -0.08947939989713492,
+                "off_rush_epa": -0.1775410921225566,
+                "def_epa_per_play": -0.004647314548492432,
+                "def_pass_epa": 0.03631309668223063,
+                "def_rush_epa": -0.04772523045539856,
+                "plays": 64,
+                "def_plays": 50,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "J.Herbert",
+                "off_epa_per_play": -0.002307838032389916,
+                "off_pass_epa": -0.007595213532424515,
+                "off_rush_epa": 0.005623225217661985,
+                "def_epa_per_play": -0.04613159453945119,
+                "def_pass_epa": -0.04117106660596852,
+                "def_rush_epa": -0.05111221894065835,
+                "plays": 51,
+                "def_plays": 69,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 27.5,
+                "home_win_prob": 72.5,
+                "away_proj": 15.2,
+                "home_proj": 22.5,
+                "total_proj": 37.7,
+                "fair_spread": -7.4,
+                "fair_home_margin": 7.4,
+                "fair_away_ml": "+264",
+                "fair_home_ml": "-264"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 247,
+                    "home": -295
+                },
+                "spreads": {
+                    "away": -104,
+                    "home": -108,
+                    "away_line": 6.5,
+                    "home_line": -6.5
+                },
+                "totals": {
+                    "over": -109,
+                    "under": -107,
+                    "total": 43.0
+                },
+                "away_ml_ev": -3.6,
+                "home_ml_ev": -3.3,
+                "away_sp_ev": -5.6,
+                "home_sp_ev": -0.1,
+                "over_ev": -11.3,
+                "under_ev": 7.6
+            }
+        },
+        {
+            "away_team": "SEA",
+            "home_team": "ARI",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T20:25:00Z",
+            "away_stats": {
+                "primary_qb": "D.Lock",
+                "off_epa_per_play": 0.054021483968748264,
+                "off_pass_epa": 0.11374152992234597,
+                "off_rush_epa": -0.03555858496164827,
+                "def_epa_per_play": -0.12093509532654821,
+                "def_pass_epa": -0.11689451304952389,
+                "def_rush_epa": -0.12864742081859637,
+                "plays": 47,
+                "def_plays": 67,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "J.Brissett",
+                "off_epa_per_play": -0.010775704029124764,
+                "off_pass_epa": 0.0064497793308506786,
+                "off_rush_epa": -0.036613929069087926,
+                "def_epa_per_play": 0.05085312302519635,
+                "def_pass_epa": 0.11181234527057134,
+                "def_rush_epa": -0.029725195431127782,
+                "plays": 69,
+                "def_plays": 51,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 77.2,
+                "home_win_prob": 22.8,
+                "away_proj": 26.6,
+                "home_proj": 17.3,
+                "total_proj": 44.0,
+                "fair_spread": 9.3,
+                "fair_home_margin": -9.3,
+                "fair_away_ml": "-338",
+                "fair_home_ml": "+338"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": -198,
+                    "home": 172
+                },
+                "spreads": {
+                    "away": -102,
+                    "home": -110,
+                    "away_line": -4.0,
+                    "home_line": 4.0
+                },
+                "totals": {
+                    "over": 101,
+                    "under": -118,
+                    "total": 41.5
+                },
+                "away_ml_ev": -0.2,
+                "home_ml_ev": -8.3,
+                "away_sp_ev": 12.7,
+                "home_sp_ev": -14.3,
+                "over_ev": 2.4,
+                "under_ev": -9.4
+            }
+        },
+        {
+            "away_team": "WAS",
+            "home_team": "DAL",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T20:25:00Z",
+            "away_stats": {
+                "primary_qb": "J.Daniels",
+                "off_epa_per_play": 0.011258497063541897,
+                "off_pass_epa": 0.00823605863960112,
+                "off_rush_epa": 0.015792154699453064,
+                "def_epa_per_play": 0.13515726073816453,
+                "def_pass_epa": 0.18330121119640885,
+                "def_rush_epa": 0.07795547193407748,
+                "plays": 68,
+                "def_plays": 51,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "D.Prescott",
+                "off_epa_per_play": 0.0815731829624811,
+                "off_pass_epa": 0.13174447486753685,
+                "off_rush_epa": 0.006316245104897509,
+                "def_epa_per_play": 0.19555330148307226,
+                "def_pass_epa": 0.28856235806659986,
+                "def_rush_epa": 0.08994623762305065,
+                "plays": 52,
+                "def_plays": 65,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 46.5,
+                "home_win_prob": 53.5,
+                "away_proj": 30.9,
+                "home_proj": 31.8,
+                "total_proj": 62.7,
+                "fair_spread": -1.0,
+                "fair_home_margin": 1.0,
+                "fair_away_ml": "+115",
+                "fair_home_ml": "-115"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 175,
+                    "home": -202
+                },
+                "spreads": {
+                    "away": -106,
+                    "home": -106,
+                    "away_line": 4.0,
+                    "home_line": -4.0
+                },
+                "totals": {
+                    "over": -121,
+                    "under": 103,
+                    "total": 50.0
+                },
+                "away_ml_ev": 1.5,
+                "home_ml_ev": -5.7,
+                "away_sp_ev": 6.2,
+                "home_sp_ev": -8.5,
+                "over_ev": 15.9,
+                "under_ev": -22.9
+            }
+        },
+        {
+            "away_team": "MIA",
+            "home_team": "SF",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-20T20:25:00Z",
+            "away_stats": {
+                "primary_qb": "M.Willis",
+                "off_epa_per_play": 0.00045222420281534545,
+                "off_pass_epa": 0.013871224872245522,
+                "off_rush_epa": -0.01967627680132991,
+                "def_epa_per_play": 0.07064022457805173,
+                "def_pass_epa": 0.11005335853531442,
+                "def_rush_epa": 0.025508193363403448,
+                "plays": 50,
+                "def_plays": 64,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "B.Purdy",
+                "off_epa_per_play": 0.05026711476465238,
+                "off_pass_epa": 0.08894198164116478,
+                "off_rush_epa": -0.007745185550116199,
+                "def_epa_per_play": 0.0287838931146421,
+                "def_pass_epa": 0.04447904647442334,
+                "def_rush_epa": 0.0018300446763373258,
+                "plays": 64,
+                "def_plays": 56,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 36.1,
+                "home_win_prob": 63.9,
+                "away_proj": 23.5,
+                "home_proj": 27.8,
+                "total_proj": 51.3,
+                "fair_spread": -4.4,
+                "fair_home_margin": 4.4,
+                "fair_away_ml": "+177",
+                "fair_home_ml": "-177"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 681,
+                    "home": -1008
+                },
+                "spreads": {
+                    "away": -113,
+                    "home": 100,
+                    "away_line": 13.5,
+                    "home_line": -13.5
+                },
+                "totals": {
+                    "over": 102,
+                    "under": -119,
+                    "total": 45.5
+                },
+                "away_ml_ev": 24.2,
+                "home_ml_ev": -7.6,
+                "away_sp_ev": 16.5,
+                "home_sp_ev": -23.6,
+                "over_ev": 9.2,
+                "under_ev": -15.5
+            }
+        },
+        {
+            "away_team": "IND",
+            "home_team": "KC",
+            "date": "2026-09-20",
+            "target_date": "2026-09-20",
+            "commence_time": "2026-09-21T00:20:00Z",
+            "away_stats": {
+                "primary_qb": "D.Jones",
+                "off_epa_per_play": 0.0809752611810566,
+                "off_pass_epa": 0.08738189548060377,
+                "off_rush_epa": 0.07136530973173588,
+                "def_epa_per_play": 0.045644273900467415,
+                "def_pass_epa": 0.08366840948229251,
+                "def_rush_epa": -0.006761626057002854,
+                "plays": 53,
+                "def_plays": 60,
+                "pace": 63.0
+            },
+            "home_stats": {
+                "primary_qb": "P.Mahomes",
+                "off_epa_per_play": 0.06829810799361712,
+                "off_pass_epa": 0.0913275123796589,
+                "off_rush_epa": 0.03375400141455445,
+                "def_epa_per_play": -0.05264070382834551,
+                "def_pass_epa": -0.04669808023379523,
+                "def_rush_epa": -0.048938006730624914,
+                "plays": 64,
+                "def_plays": 46,
+                "pace": 63.0
+            },
+            "simulation": {
+                "away_win_prob": 37.1,
+                "home_win_prob": 62.9,
+                "away_proj": 23.4,
+                "home_proj": 27.6,
+                "total_proj": 51.0,
+                "fair_spread": -4.1,
+                "fair_home_margin": 4.1,
+                "fair_away_ml": "+169",
+                "fair_home_ml": "-169"
+            },
+            "market_data": {
+                "h2h": {
+                    "away": 244,
+                    "home": -290
+                },
+                "spreads": {
+                    "away": -121,
+                    "home": 108,
+                    "away_line": 7.0,
+                    "home_line": -7.0
+                },
+                "totals": {
+                    "over": 101,
+                    "under": -118,
+                    "total": 47.0
+                },
+                "away_ml_ev": 1.3,
+                "home_ml_ev": -5.1,
+                "away_sp_ev": 3.5,
+                "home_sp_ev": -5.7,
+                "over_ev": 7.0,
+                "under_ev": -10.1
+            }
+        }
+    ]
+}
