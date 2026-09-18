@@ -259,7 +259,7 @@
         }
 
         .chart-container {
-            display: none; /* Hidden by default */
+            display: none;
             background: #0f172a;
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -280,7 +280,6 @@
         <div class="update-badge" id="update-badge">Last Ran: Loading...</div>
     </div>
 
-    <!-- This container will hold all the dynamically generated game cards -->
     <div class="container" id="games-container"></div>
 
     <script>
@@ -307,7 +306,6 @@
             }
         }
 
-        // Toggles the visibility of the radar chart for a specific card
         function toggleChart(index, btnElement) {
             const chartDiv = document.getElementById(`chart-container-${index}`);
             if (chartDiv.classList.contains('active')) {
@@ -376,7 +374,7 @@
                             <div class="matchup-title">${game.away_team} @ ${game.home_team}</div>
                             <div class="card-header">
                                 <span>Monte Carlo Projections</span>
-                                <span>Proj. Total: ${sim.proj_total || '--'}</span>
+                                <span>Proj. Total: ${sim.total_proj || '--'}</span>
                             </div>
 
                             <div class="prob-row">
@@ -448,7 +446,6 @@
                     container.insertAdjacentHTML('beforeend', cardHTML);
                 });
 
-                // Initialize all the charts after the HTML is injected
                 todaysGames.forEach((game, index) => {
                     if (game.away_stats && game.home_stats) {
                         const ctx = document.getElementById(`chart-${index}`).getContext('2d');
