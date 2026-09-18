@@ -1,117 +1,222 @@
-# src/grade_backtest.py
+import csv
+import numpy as np
+from scraper_nfl import (
+    get_blended_nfl_stats,
+    simulate_nfl_game,
+    proportional_devig,
+    calculate_ev,
+    american_to_decimal,
+    ML_MARKET_WEIGHT,
+    SPREAD_MARKET_WEIGHT,
+    TOTAL_MARKET_WEIGHT
+)
 
-import os
-import requests
-import pandas as pd
-import json
+# Seed for consistent simulations
+np.random.seed(42)
 
-def grade_bets():
-    csv_file = 'data/historical_log.csv'
-    
-    if not os.path.exists(csv_file) or os.path.getsize(csv_file) == 0:
-        print("No historical log found or file is empty. Skipping grading.")
-        update_roi_dashboard(pd.DataFrame())
-        return
-        
+# Specific dates for NFL Week 1 (2026)
+WEEK_1_DATES = ["2026-09-10", "2026-09-11", "2026-09-12", "2026-09-13", "2026-09-14"]
+
+def backtest_safe_float(val):
+    if val is None: return None
+    val_str = str(val).strip().lower()
+    if val_str in ['', 'n/a', 'nan', 'none']: return None
     try:
-        df = pd.read_csv(csv_file)
-    except pd.errors.EmptyDataError:
-        print("CSV is empty despite size check. Skipping grading.")
-        update_roi_dashboard(pd.DataFrame())
-        return
+        return float(val_str)
+    except ValueError:
+        return None
 
-    if df.empty or 'status' not in df.columns:
-        print("No valid bet columns. Skipping grading.")
-        update_roi_dashboard(df)
-        return
-
-    pending_mask = df['status'] == 'Pending'
-    if not pending_mask.any():
-        print("No pending bets to grade.")
-        update_roi_dashboard(df)
-        return
-        
-    api_key = os.environ.get("ODDS_API_KEY")
+def evaluate_bet(market_type, pick, row, bet_amount=25.0):
+    away_score = backtest_safe_float(row.get('Actual_Away_Score'))
+    home_score = backtest_safe_float(row.get('Actual_Home_Score'))
     
-    url = "https://api.the-odds-api.com/v4/sports/americanfootball_nfl/scores"
-    params = {"apiKey": api_key, "daysFrom": 3}
-    res = requests.get(url, params=params)
-    scores_data = res.json()
+    if away_score is None or home_score is None:
+        return 0.0, 'push'
+        
+    actual_total = away_score + home_score
+
+    if market_type == 'ML':
+        odds = backtest_safe_float(row.get('Pinnacle_Away_ML') if pick == 'away' else row.get('Pinnacle_Home_ML'))
+        won = (away_score > home_score) if pick == 'away' else (home_score > away_score)
+        if away_score == home_score:
+            return 0.0, 'push'
+        profit = bet_amount * (american_to_decimal(odds) - 1.0) if won else -bet_amount
+        return profit, ('win' if won else 'loss')
+
+    elif market_type == 'SPREAD':
+        line = backtest_safe_float(row.get('Pinnacle_Away_Spread') if pick == 'away' else row.get('Pinnacle_Home_Spread'))
+        margin = (away_score - home_score) if pick == 'away' else (home_score - away_score)
+        if margin + line == 0:
+            return 0.0, 'push'
+        won = (margin + line) > 0
+        profit = bet_amount * (100 / 110) if won else -bet_amount  
+        return profit, ('win' if won else 'loss')
+
+    elif market_type == 'TOTAL':
+        total_line = backtest_safe_float(row.get('Pinnacle_Total_Line'))
+        if total_line is None:
+            return 0.0, 'push'
+        if actual_total == total_line:
+            return 0.0, 'push'
+        won = (actual_total > total_line) if pick == 'over' else (actual_total < total_line)
+        profit = bet_amount * (100 / 110) if won else -bet_amount
+        return profit, ('win' if won else 'loss')
+
+def run_backtest(flat_bet=25.0):
+    # Tiered EV Hurdles
+    ml_min, ml_max = 3.0, 10.0
+    sp_min, sp_max = 1.5, 7.0
+    tot_min, tot_max = 1.5, 7.0
     
-    completed_games = {}
-    for game in scores_data:
-        if game.get('completed'):
-            scores = game.get('scores')
-            if scores:
-                home_score = next((float(s['score']) for s in scores if s['name'] == game['home_team']), 0)
-                away_score = next((float(s['score']) for s in scores if s['name'] == game['away_team']), 0)
-                completed_games[game['id']] = {
-                    'home_team': game['home_team'],
-                    'away_team': game['away_team'],
-                    'home_score': home_score,
-                    'away_score': away_score
-                }
+    # Load the QB-isolated baselines
+    epa_stats, league_points, league_epa, diagnostics = get_blended_nfl_stats(2025, 2026)
 
-    for idx, row in df[pending_mask].iterrows():
-        game_id = row['game_id']
-        if game_id in completed_games:
-            c_game = completed_games[game_id]
-            target_team = row['target_team']
-            target_line = float(row['target_line'])
-            stake = float(row['stake'])
-            odds_dec = float(row['odds_decimal'])
+    games_evaluated = 0
+    total_staked = 0.0
+    total_profit = 0.0
+    results_summary = {
+        'ML': {'W': 0, 'L': 0, 'P': 0},
+        'SPREAD': {'W': 0, 'L': 0, 'P': 0},
+        'TOTAL': {'W': 0, 'L': 0, 'P': 0}
+    }
+
+    with open('history.csv', mode='r', encoding='utf-8') as f:
+        reader = list(csv.DictReader(f))
+
+    print(f"\n--- REPLAYING WEEK 1 WITH FLAT ${flat_bet:.2f} BETS (QB ISOLATION ENGINE) ---\n")
+
+    for row in reader:
+        # Strictly filter for Week 1 Dates
+        if row['Date'] not in WEEK_1_DATES:
+            continue
             
-            if target_team == c_game['home_team']:
-                target_score = c_game['home_score']
-                opp_score = c_game['away_score']
-            else:
-                target_score = c_game['away_score']
-                opp_score = c_game['home_score']
-                
-            margin = target_score - opp_score + target_line
-            
-            if margin > 0:
-                df.at[idx, 'status'] = 'Win'
-                df.at[idx, 'profit_loss'] = round(stake * (odds_dec - 1.0), 2)
-            elif margin < 0:
-                df.at[idx, 'status'] = 'Loss'
-                df.at[idx, 'profit_loss'] = -stake
-            else:
-                df.at[idx, 'status'] = 'Push'
-                df.at[idx, 'profit_loss'] = 0.0
-
-    df.to_csv(csv_file, index=False)
-    update_roi_dashboard(df)
-
-def update_roi_dashboard(df):
-    if df.empty or 'status' not in df.columns:
-        stats = {"total_bets": 0, "wins": 0, "losses": 0, "pushes": 0, "roi": 0.0, "profit": 0.0}
-    else:
-        graded = df[df['status'].isin(['Win', 'Loss', 'Push'])]
-        total_bets = len(graded)
+        away_score = backtest_safe_float(row.get('Actual_Away_Score'))
+        home_score = backtest_safe_float(row.get('Actual_Home_Score'))
         
-        if total_bets == 0:
-            stats = {"total_bets": 0, "wins": 0, "losses": 0, "pushes": 0, "roi": 0.0, "profit": 0.0}
-        else:
-            wins = len(graded[graded['status'] == 'Win'])
-            losses = len(graded[graded['status'] == 'Loss'])
-            pushes = len(graded[graded['status'] == 'Push'])
-            total_profit = graded['profit_loss'].sum()
-            total_staked = graded['stake'].sum()
-            roi = (total_profit / total_staked) * 100 if total_staked > 0 else 0.0
-            
-            stats = {
-                "total_bets": total_bets,
-                "wins": wins,
-                "losses": losses,
-                "pushes": pushes,
-                "roi": round(roi, 2),
-                "profit": round(total_profit, 2)
-            }
-        
-    os.makedirs('data', exist_ok=True)
-    with open('data/roi_stats.json', 'w') as f:
-        json.dump(stats, f)
+        # Skip if the game isn't finished yet
+        if away_score is None or home_score is None:
+            continue
 
-if __name__ == "__main__":
-    grade_bets()
+        away = row['Away_Team']
+        home = row['Home_Team']
+        if away not in epa_stats or home not in epa_stats:
+            continue
+
+        games_evaluated += 1
+        
+        total_line = backtest_safe_float(row.get('Pinnacle_Total_Line'))
+        spread_line = backtest_safe_float(row.get('Pinnacle_Home_Spread'))
+        away_ml = backtest_safe_float(row.get('Pinnacle_Away_ML'))
+        home_ml = backtest_safe_float(row.get('Pinnacle_Home_ML'))
+
+        sim_res = simulate_nfl_game(
+            epa_stats[away], 
+            epa_stats[home], 
+            league_points=league_points,
+            league_epa=league_epa,
+            hfa_points=diagnostics["calibration"]["hfa_points"],
+            epa_to_points=diagnostics["calibration"]["epa_to_points_per_play"],
+            total_line=total_line if total_line is not None else 45.0, 
+            spread_line=spread_line if spread_line is not None else -3.0
+        )
+
+        # --- Moneyline Check ---
+        if away_ml is not None and home_ml is not None:
+            t_away, t_home = proportional_devig(away_ml, home_ml)
+            model_away = sim_res["away_win_prob"] / 100.0
+            model_home = sim_res["home_win_prob"] / 100.0
+            
+            b_away = ((1.0 - ML_MARKET_WEIGHT) * model_away) + (ML_MARKET_WEIGHT * t_away)
+            b_home = ((1.0 - ML_MARKET_WEIGHT) * model_home) + (ML_MARKET_WEIGHT * t_home)
+
+            away_ml_ev = calculate_ev(b_away * 100.0, away_ml)
+            home_ml_ev = calculate_ev(b_home * 100.0, home_ml)
+
+            if away_ml_ev and ml_min <= away_ml_ev <= ml_max:
+                p, res = evaluate_bet('ML', 'away', row, flat_bet)
+                if res != 'push':
+                    total_staked += flat_bet
+                    total_profit += p
+                    results_summary['ML'][res[0].upper()] += 1
+                    print(f"Betted ML: {away} ({res.upper()}) | EV: {away_ml_ev:.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:.2f}")
+
+            elif home_ml_ev and ml_min <= home_ml_ev <= ml_max:
+                p, res = evaluate_bet('ML', 'home', row, flat_bet)
+                if res != 'push':
+                    total_staked += flat_bet
+                    total_profit += p
+                    results_summary['ML'][res[0].upper()] += 1
+                    print(f"Betted ML: {home} ({res.upper()}) | EV: {home_ml_ev:.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:.2f}")
+
+        # --- Spread Check ---
+        if spread_line is not None and backtest_safe_float(row.get('Pinnacle_Away_Spread')) is not None:
+            t_sp_a, t_sp_h = proportional_devig(-110, -110)
+            model_away_sp = sim_res["spread_probs"]["away"]
+            model_home_sp = sim_res["spread_probs"]["home"]
+
+            b_sp_a = ((1.0 - SPREAD_MARKET_WEIGHT) * model_away_sp) + (SPREAD_MARKET_WEIGHT * t_sp_a)
+            b_sp_h = ((1.0 - SPREAD_MARKET_WEIGHT) * model_home_sp) + (SPREAD_MARKET_WEIGHT * t_sp_h)
+            b_sp_push = sim_res["spread_probs"]["push"]
+
+            away_sp_ev = calculate_ev(b_sp_a * 100.0, -110, b_sp_push * 100.0)
+            home_sp_ev = calculate_ev(b_sp_h * 100.0, -110, b_sp_push * 100.0)
+
+            if away_sp_ev and sp_min <= away_sp_ev <= sp_max:
+                p, res = evaluate_bet('SPREAD', 'away', row, flat_bet)
+                if res != 'push':
+                    total_staked += flat_bet
+                    total_profit += p
+                    results_summary['SPREAD'][res[0].upper()] += 1
+                    print(f"Betted SPREAD: {away} ({res.upper()}) | EV: {away_sp_ev:.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:.2f}")
+
+            elif home_sp_ev and sp_min <= home_sp_ev <= sp_max:
+                p, res = evaluate_bet('SPREAD', 'home', row, flat_bet)
+                if res != 'push':
+                    total_staked += flat_bet
+                    total_profit += p
+                    results_summary['SPREAD'][res[0].upper()] += 1
+                    print(f"Betted SPREAD: {home} ({res.upper()}) | EV: {home_sp_ev:.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:.2f}")
+
+        # --- Totals Check ---
+        if total_line is not None:
+            t_ou_o, t_ou_u = proportional_devig(-110, -110)
+            model_over = sim_res["ou_probs"]["over"]
+            model_under = sim_res["ou_probs"]["under"]
+
+            b_ou_o = ((1.0 - TOTAL_MARKET_WEIGHT) * model_over) + (TOTAL_MARKET_WEIGHT * t_ou_o)
+            b_ou_u = ((1.0 - TOTAL_MARKET_WEIGHT) * model_under) + (TOTAL_MARKET_WEIGHT * t_ou_u)
+            b_ou_push = sim_res["ou_probs"]["push"]
+
+            over_ev = calculate_ev(b_ou_o * 100.0, -110, b_ou_push * 100.0)
+            under_ev = calculate_ev(b_ou_u * 100.0, -110, b_ou_push * 100.0)
+
+            if over_ev and tot_min <= over_ev <= tot_max:
+                p, res = evaluate_bet('TOTAL', 'over', row, flat_bet)
+                if res != 'push':
+                    total_staked += flat_bet
+                    total_profit += p
+                    results_summary['TOTAL'][res[0].upper()] += 1
+                    print(f"Betted TOTAL: OVER {total_line} in {away}@{home} ({res.upper()}) | EV: {over_ev:.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:.2f}")
+
+            elif under_ev and tot_min <= under_ev <= tot_max:
+                p, res = evaluate_bet('TOTAL', 'under', row, flat_bet)
+                if res != 'push':
+                    total_staked += flat_bet
+                    total_profit += p
+                    results_summary['TOTAL'][res[0].upper()] += 1
+                    print(f"Betted TOTAL: UNDER {total_line} in {away}@{home} ({res.upper()}) | EV: {under_ev:.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:.2f}")
+
+    roi = (total_profit / total_staked * 100) if total_staked > 0 else 0.0
+    
+    print("\n--- FINAL WEEK 1 BACKTEST RESULTS ---")
+    print(f"Games Evaluated:  {games_evaluated}")
+    print(f"Total Bets Placed: {sum(results_summary['ML'].values()) + sum(results_summary['SPREAD'].values()) + sum(results_summary['TOTAL'].values())}")
+    print(f"Moneyline Record: {results_summary['ML']['W']}-{results_summary['ML']['L']}-{results_summary['ML']['P']}")
+    print(f"Spread Record:    {results_summary['SPREAD']['W']}-{results_summary['SPREAD']['L']}-{results_summary['SPREAD']['P']}")
+    print(f"Totals Record:    {results_summary['TOTAL']['W']}-{results_summary['TOTAL']['L']}-{results_summary['TOTAL']['P']}")
+    print(f"Total Staked:     ${total_staked:.2f}")
+    print(f"Net Profit:       ${total_profit:.2f}")
+    print(f"Recalibrated ROI: {roi:.2f}%")
+
+if __name__ == '__main__':
+    run_backtest()
