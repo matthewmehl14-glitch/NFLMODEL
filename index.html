@@ -32,7 +32,7 @@
 
         .header-content {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         h2 {
@@ -65,27 +65,8 @@
             max-width: 860px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-        }
-
-        .controls {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
-
-        select {
-            width: 100%;
-            max-width: 600px;
-            padding: 12px;
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 16px;
-            outline: none;
-            cursor: pointer;
-            text-align: center;
+            gap: 24px;
+            padding-bottom: 40px;
         }
 
         .prediction-card {
@@ -109,6 +90,15 @@
             letter-spacing: 1px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 8px;
+        }
+        
+        .matchup-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 800;
+            margin-top: -4px;
+            color: var(--text-main);
+            letter-spacing: 1px;
         }
 
         .prob-row {
@@ -233,7 +223,6 @@
         .prob-bar-fill {
             height: 100%;
             background-color: var(--cyan-team);
-            transition: width 0.5s ease-in-out;
         }
 
         .total-banner {
@@ -248,12 +237,39 @@
             font-weight: bold;
         }
 
+        .toggle-chart-btn {
+            width: 100%;
+            background-color: #1E293B;
+            color: var(--text-muted);
+            border: 1px solid #334155;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+
+        .toggle-chart-btn:hover {
+            background-color: #334155;
+            color: var(--text-main);
+        }
+
         .chart-container {
-            background: var(--card-bg);
+            display: none; /* Hidden by default */
+            background: #0f172a;
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 10px;
             position: relative;
+        }
+
+        .chart-container.active {
+            display: block;
         }
     </style>
 </head>
@@ -264,105 +280,10 @@
         <div class="update-badge" id="update-badge">Last Ran: Loading...</div>
     </div>
 
-    <div class="container">
-        <div class="controls">
-            <select id="game-select"></select>
-        </div>
-
-        <div class="prediction-card">
-            <div class="card-header">
-                <span>Monte Carlo Projections (10,000 Sims)</span>
-                <span id="proj-total-badge">Proj. Total: --</span>
-            </div>
-
-            <!-- Team Projections & Win Probabilities -->
-            <div class="prob-row">
-                <div class="team-prob-box">
-                    <img id="away-logo" class="team-logo" src="" alt="Away">
-                    <span class="prob-val" id="away-prob" style="color: var(--cyan-team)">--%</span>
-                    <span class="prob-name" id="away-name">Away Team</span>
-                    <span class="fair-line" id="away-fair-ml">Fair ML: --</span>
-                    <span class="fair-line" id="away-fair-sp">Fair Spread: --</span>
-                </div>
-                <div class="team-prob-box right">
-                    <img id="home-logo" class="team-logo" src="" alt="Home">
-                    <span class="prob-val" id="home-prob" style="color: var(--red-team)">--%</span>
-                    <span class="prob-name" id="home-name">Home Team</span>
-                    <span class="fair-line" id="home-fair-ml">Fair ML: --</span>
-                    <span class="fair-line" id="home-fair-sp">Fair Spread: --</span>
-                </div>
-            </div>
-
-            <div class="prob-bar-container">
-                <div class="prob-bar-fill" id="prob-bar" style="width: 50%;"></div>
-            </div>
-
-            <div class="total-banner">
-                Projected Score: <span id="proj-score">--</span>
-            </div>
-
-            <!-- Pinnacle Moneyline Market -->
-            <div class="market-section-title">Pinnacle Moneyline Market</div>
-            <div class="market-row">
-                <div class="market-item">
-                    <div>
-                        <span class="pinny-line" id="away-ml-pinny">PINN: --</span>
-                        <span class="ev-tag" id="away-ml-ev">EV: --</span>
-                    </div>
-                </div>
-                <div class="market-item right">
-                    <div>
-                        <span class="pinny-line" id="home-ml-pinny">PINN: --</span>
-                        <span class="ev-tag" id="home-ml-ev">EV: --</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pinnacle Spread Market -->
-            <div class="market-section-title">Pinnacle Spread Market</div>
-            <div class="market-row">
-                <div class="market-item">
-                    <div>
-                        <span class="pinny-line" id="away-sp-pinny">PINN: --</span>
-                        <span class="ev-tag" id="away-sp-ev">EV: --</span>
-                    </div>
-                </div>
-                <div class="market-item right">
-                    <div>
-                        <span class="pinny-line" id="home-sp-pinny">PINN: --</span>
-                        <span class="ev-tag" id="home-sp-ev">EV: --</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pinnacle Totals Market -->
-            <div id="totals-container" style="display: none;">
-                <div class="market-section-title">Pinnacle Total Market</div>
-                <div class="market-row">
-                    <div class="market-item">
-                        <div>
-                            <span class="pinny-line" id="over-pinny">O --</span>
-                            <span class="ev-tag" id="over-ev">EV: --</span>
-                        </div>
-                    </div>
-                    <div class="market-item right">
-                        <div>
-                            <span class="pinny-line" id="under-pinny">U --</span>
-                            <span class="ev-tag" id="under-ev">EV: --</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="chart-container">
-            <canvas id="spiderChart"></canvas>
-        </div>
-    </div>
+    <!-- This container will hold all the dynamically generated game cards -->
+    <div class="container" id="games-container"></div>
 
     <script>
-        let todaysGames = [];
-        let spiderChart = null;
         const stats = ['off_epa_per_play', 'off_pass_epa', 'off_rush_epa', 'def_epa_per_play', 'def_pass_epa', 'def_rush_epa'];
         const statLabels = ['Offense EPA/Play', 'Pass Offense EPA', 'Rush Offense EPA', 'Defense EPA/Play', 'Pass Defense EPA', 'Rush Defense EPA'];
 
@@ -373,144 +294,208 @@
             return `+${Math.round((100 * (1 - p)) / p)}`;
         }
 
-        function setEV(elementId, evValue, targetThreshold) {
-            const el = document.getElementById(elementId);
+        function getEVBadgeHTML(evValue, targetThreshold) {
             if (evValue === null || evValue === undefined || evValue === 'N/A') {
-                el.textContent = "EV: N/A";
-                el.className = "ev-tag";
-                return;
+                return `<span class="ev-tag">EV: N/A</span>`;
             }
             const sign = evValue > 0 ? '+' : '';
-            
-            // Dynamic Highlight: Matches your backtest hurdle requirements
             if (evValue >= targetThreshold) {
-                el.innerHTML = `🔥 TARGET: ${sign}${evValue}%`;
-                el.className = `ev-tag ev-target`;
+                return `<span class="ev-tag ev-target">🔥 TARGET: ${sign}${evValue.toFixed(1)}%</span>`;
             } else {
-                el.textContent = `EV: ${sign}${evValue}%`;
-                el.className = `ev-tag ${evValue > 0 ? 'ev-positive' : 'ev-negative'}`;
+                const colorClass = evValue > 0 ? 'ev-positive' : 'ev-negative';
+                return `<span class="ev-tag ${colorClass}">EV: ${sign}${evValue.toFixed(1)}%</span>`;
+            }
+        }
+
+        // Toggles the visibility of the radar chart for a specific card
+        function toggleChart(index, btnElement) {
+            const chartDiv = document.getElementById(`chart-container-${index}`);
+            if (chartDiv.classList.contains('active')) {
+                chartDiv.classList.remove('active');
+                btnElement.textContent = 'Show Matchup Chart';
+            } else {
+                chartDiv.classList.add('active');
+                btnElement.textContent = 'Hide Matchup Chart';
             }
         }
 
         fetch('./data.json?t=' + new Date().getTime(), { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
-                // FIXED: Clearly visible Last Updated timestamp
                 if (data.last_updated) {
                     const updateTime = new Date(data.last_updated);
                     const options = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' };
                     document.getElementById('update-badge').textContent = "Last Ran: " + updateTime.toLocaleString('en-US', options);
                 }
 
-                todaysGames = data.todays_games || [];
+                const todaysGames = data.todays_games || [];
                 document.getElementById('date-subtitle').textContent = `Slate for ${data.date || data.target_date || 'Current'} (10,000 Sims per game)`;
 
-                const sel = document.getElementById('game-select');
-                sel.innerHTML = '';
+                const container = document.getElementById('games-container');
+                container.innerHTML = '';
+
                 if (todaysGames.length === 0) {
-                    sel.innerHTML = '<option>No games found for this slate</option>';
+                    container.innerHTML = '<p style="text-align: center;">No games found for this slate</p>';
                     return;
                 }
 
-                todaysGames.forEach((g, i) => sel.appendChild(new Option(`${g.away_team} @ ${g.home_team}`, i)));
-                initChart();
-                updateDash();
+                todaysGames.forEach((game, index) => {
+                    const sim = game.simulation || {};
+                    const mkt = game.market_data || {};
+                    
+                    const fairMargin = (sim.home_proj - sim.away_proj).toFixed(1);
+                    const awayFairSp = fairMargin > 0 ? `+${fairMargin}` : fairMargin;
+                    const homeFairSp = fairMargin > 0 ? `-${fairMargin}` : `+${Math.abs(fairMargin)}`;
+
+                    const spAwayLine = mkt.spreads?.away_line;
+                    const spHomeLine = mkt.spreads?.home_line;
+
+                    let totalsHTML = '';
+                    if (mkt.totals?.total && mkt.totals.total !== 'N/A') {
+                        totalsHTML = `
+                            <div class="market-section-title">Pinnacle Total Market</div>
+                            <div class="market-row">
+                                <div class="market-item">
+                                    <div>
+                                        <span class="pinny-line">O ${mkt.totals.total} (${mkt.totals.over > 0 ? '+' : ''}${mkt.totals.over || 'N/A'})</span>
+                                        ${getEVBadgeHTML(mkt.over_ev, 1.5)}
+                                    </div>
+                                </div>
+                                <div class="market-item right">
+                                    <div>
+                                        <span class="pinny-line">U ${mkt.totals.total} (${mkt.totals.under > 0 ? '+' : ''}${mkt.totals.under || 'N/A'})</span>
+                                        ${getEVBadgeHTML(mkt.under_ev, 1.5)}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    const cardHTML = `
+                        <div class="prediction-card">
+                            <div class="matchup-title">${game.away_team} @ ${game.home_team}</div>
+                            <div class="card-header">
+                                <span>Monte Carlo Projections</span>
+                                <span>Proj. Total: ${sim.proj_total || '--'}</span>
+                            </div>
+
+                            <div class="prob-row">
+                                <div class="team-prob-box">
+                                    <img class="team-logo" src="https://a.espncdn.com/i/teamlogos/nfl/500/${game.away_team.toLowerCase()}.png" alt="${game.away_team}">
+                                    <span class="prob-val" style="color: var(--cyan-team)">${sim.away_win_prob || '--'}%</span>
+                                    <span class="prob-name">${game.away_team}</span>
+                                    <span class="fair-line">Fair ML: ${probToMoneyline(sim.away_win_prob)}</span>
+                                    <span class="fair-line">Fair Spread: ${awayFairSp}</span>
+                                </div>
+                                <div class="team-prob-box right">
+                                    <img class="team-logo" src="https://a.espncdn.com/i/teamlogos/nfl/500/${game.home_team.toLowerCase()}.png" alt="${game.home_team}">
+                                    <span class="prob-val" style="color: var(--red-team)">${sim.home_win_prob || '--'}%</span>
+                                    <span class="prob-name">${game.home_team}</span>
+                                    <span class="fair-line">Fair ML: ${probToMoneyline(sim.home_win_prob)}</span>
+                                    <span class="fair-line">Fair Spread: ${homeFairSp}</span>
+                                </div>
+                            </div>
+
+                            <div class="prob-bar-container">
+                                <div class="prob-bar-fill" style="width: ${sim.away_win_prob || 50}%;"></div>
+                            </div>
+
+                            <div class="total-banner">
+                                Projected Score: <span>${game.away_team} ${sim.away_proj || 0} - ${game.home_team} ${sim.home_proj || 0}</span>
+                            </div>
+
+                            <div class="market-section-title">Pinnacle Moneyline Market</div>
+                            <div class="market-row">
+                                <div class="market-item">
+                                    <div>
+                                        <span class="pinny-line">PINN: ${mkt.h2h?.away > 0 ? '+' : ''}${mkt.h2h?.away || 'N/A'}</span>
+                                        ${getEVBadgeHTML(mkt.away_ml_ev, 3.0)}
+                                    </div>
+                                </div>
+                                <div class="market-item right">
+                                    <div>
+                                        <span class="pinny-line">PINN: ${mkt.h2h?.home > 0 ? '+' : ''}${mkt.h2h?.home || 'N/A'}</span>
+                                        ${getEVBadgeHTML(mkt.home_ml_ev, 3.0)}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="market-section-title">Pinnacle Spread Market</div>
+                            <div class="market-row">
+                                <div class="market-item">
+                                    <div>
+                                        <span class="pinny-line">PINN: ${spAwayLine > 0 ? '+' : ''}${spAwayLine || '-'} (${mkt.spreads?.away > 0 ? '+' : ''}${mkt.spreads?.away || 'N/A'})</span>
+                                        ${getEVBadgeHTML(mkt.away_sp_ev, 1.5)}
+                                    </div>
+                                </div>
+                                <div class="market-item right">
+                                    <div>
+                                        <span class="pinny-line">PINN: ${spHomeLine > 0 ? '+' : ''}${spHomeLine || '-'} (${mkt.spreads?.home > 0 ? '+' : ''}${mkt.spreads?.home || 'N/A'})</span>
+                                        ${getEVBadgeHTML(mkt.home_sp_ev, 1.5)}
+                                    </div>
+                                </div>
+                            </div>
+
+                            ${totalsHTML}
+
+                            <button class="toggle-chart-btn" onclick="toggleChart(${index}, this)">Show Matchup Chart</button>
+                            
+                            <div class="chart-container" id="chart-container-${index}">
+                                <canvas id="chart-${index}"></canvas>
+                            </div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', cardHTML);
+                });
+
+                // Initialize all the charts after the HTML is injected
+                todaysGames.forEach((game, index) => {
+                    if (game.away_stats && game.home_stats) {
+                        const ctx = document.getElementById(`chart-${index}`).getContext('2d');
+                        new Chart(ctx, {
+                            type: 'radar',
+                            data: {
+                                labels: statLabels,
+                                datasets: [
+                                    { 
+                                        label: game.away_team, 
+                                        data: stats.map(s => ((game.away_stats[s] + 0.3) / 0.6) * 100), 
+                                        backgroundColor: 'rgba(0, 180, 216, 0.35)', 
+                                        borderColor: '#00B4D8', 
+                                        pointBackgroundColor: '#00B4D8' 
+                                    },
+                                    { 
+                                        label: game.home_team, 
+                                        data: stats.map(s => ((game.home_stats[s] + 0.3) / 0.6) * 100), 
+                                        backgroundColor: 'rgba(255, 77, 77, 0.35)', 
+                                        borderColor: '#FF4D4D', 
+                                        pointBackgroundColor: '#FF4D4D' 
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                scales: {
+                                    r: {
+                                        min: 0, max: 100,
+                                        ticks: { display: false },
+                                        grid: { color: '#1E293B' },
+                                        angleLines: { color: '#1E293B' },
+                                        pointLabels: { color: '#E2E8F0', font: { size: 10, weight: 'bold' } }
+                                    }
+                                },
+                                plugins: {
+                                    legend: { display: false }
+                                }
+                            }
+                        });
+                    }
+                });
             })
             .catch(err => {
                 console.error("Error loading JSON:", err);
                 document.getElementById('date-subtitle').textContent = "Error loading data.";
             });
-
-        function initChart() {
-            spiderChart = new Chart(document.getElementById('spiderChart').getContext('2d'), {
-                type: 'radar',
-                data: {
-                    labels: statLabels,
-                    datasets: [
-                        { label: 'Away', data: [], backgroundColor: 'rgba(0, 180, 216, 0.35)', borderColor: '#00B4D8', pointBackgroundColor: '#00B4D8' },
-                        { label: 'Home', data: [], backgroundColor: 'rgba(255, 77, 77, 0.35)', borderColor: '#FF4D4D', pointBackgroundColor: '#FF4D4D' }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        r: {
-                            min: 0, max: 100,
-                            ticks: { display: false },
-                            grid: { color: '#1E293B' },
-                            angleLines: { color: '#1E293B' },
-                            pointLabels: { color: '#E2E8F0', font: { size: 12, weight: 'bold' } }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-        }
-
-        function updateDash() {
-            if (!todaysGames.length) return;
-            const game = todaysGames[document.getElementById('game-select').value];
-            const sim = game.simulation || {};
-            const mkt = game.market_data || {};
-
-            // Names & Logos
-            document.getElementById('away-name').textContent = game.away_team;
-            document.getElementById('home-name').textContent = game.home_team;
-            document.getElementById('away-logo').src = `https://a.espncdn.com/i/teamlogos/nfl/500/${game.away_team.toLowerCase()}.png`;
-            document.getElementById('home-logo').src = `https://a.espncdn.com/i/teamlogos/nfl/500/${game.home_team.toLowerCase()}.png`;
-
-            // Projections
-            document.getElementById('away-prob').textContent = `${sim.away_win_prob || '--'}%`;
-            document.getElementById('home-prob').textContent = `${sim.home_win_prob || '--'}%`;
-            document.getElementById('prob-bar').style.width = `${sim.away_win_prob || 50}%`;
-            document.getElementById('proj-total-badge').textContent = `Proj. Total: ${sim.proj_total || '--'}`;
-            document.getElementById('proj-score').textContent = `${game.away_team} ${sim.away_proj || 0} - ${game.home_team} ${sim.home_proj || 0}`;
-
-            // Fair Lines
-            document.getElementById('away-fair-ml').textContent = `Fair ML: ${probToMoneyline(sim.away_win_prob)}`;
-            document.getElementById('home-fair-ml').textContent = `Fair ML: ${probToMoneyline(sim.home_win_prob)}`;
-            const fairMargin = (sim.home_proj - sim.away_proj).toFixed(1);
-            document.getElementById('away-fair-sp').textContent = `Fair Spread: ${fairMargin > 0 ? '+' : ''}${fairMargin}`;
-            document.getElementById('home-fair-sp').textContent = `Fair Spread: ${fairMargin > 0 ? '-' : '+'}${Math.abs(fairMargin)}`;
-
-            // Pinnacle Moneyline (Requires 3.0% EV to trigger Target badge)
-            document.getElementById('away-ml-pinny').textContent = `PINN: ${mkt.h2h?.away > 0 ? '+' : ''}${mkt.h2h?.away || 'N/A'}`;
-            document.getElementById('home-ml-pinny').textContent = `PINN: ${mkt.h2h?.home > 0 ? '+' : ''}${mkt.h2h?.home || 'N/A'}`;
-            setEV('away-ml-ev', mkt.away_ml_ev, 3.0);
-            setEV('home-ml-ev', mkt.home_ml_ev, 3.0);
-
-            // Pinnacle Spread (Requires 1.5% EV to trigger Target badge)
-            const spAwayLine = mkt.spreads?.away_line;
-            const spHomeLine = mkt.spreads?.home_line;
-            document.getElementById('away-sp-pinny').textContent = `PINN: ${spAwayLine > 0 ? '+' : ''}${spAwayLine || '-'} (${mkt.spreads?.away > 0 ? '+' : ''}${mkt.spreads?.away || 'N/A'})`;
-            document.getElementById('home-sp-pinny').textContent = `PINN: ${spHomeLine > 0 ? '+' : ''}${spHomeLine || '-'} (${mkt.spreads?.home > 0 ? '+' : ''}${mkt.spreads?.home || 'N/A'})`;
-            setEV('away-sp-ev', mkt.away_sp_ev, 1.5);
-            setEV('home-sp-ev', mkt.home_sp_ev, 1.5);
-
-            // Pinnacle Totals (Requires 1.5% EV to trigger Target badge)
-            if (mkt.totals?.total && mkt.totals.total !== 'N/A') {
-                document.getElementById('totals-container').style.display = 'block';
-                document.getElementById('over-pinny').textContent = `O ${mkt.totals.total} (${mkt.totals.over > 0 ? '+' : ''}${mkt.totals.over || 'N/A'})`;
-                document.getElementById('under-pinny').textContent = `U ${mkt.totals.total} (${mkt.totals.under > 0 ? '+' : ''}${mkt.totals.under || 'N/A'})`;
-                setEV('over-ev', mkt.over_ev, 1.5);
-                setEV('under-ev', mkt.under_ev, 1.5);
-            } else {
-                document.getElementById('totals-container').style.display = 'none';
-            }
-
-            // Radar Chart Update
-            if (game.away_stats && game.home_stats) {
-                spiderChart.data.datasets[0].label = game.away_team;
-                spiderChart.data.datasets[0].data = stats.map(s => ((game.away_stats[s] + 0.3) / 0.6) * 100);
-                spiderChart.data.datasets[1].label = game.home_team;
-                spiderChart.data.datasets[1].data = stats.map(s => ((game.home_stats[s] + 0.3) / 0.6) * 100);
-                spiderChart.update();
-            }
-        }
-
-        document.getElementById('game-select').addEventListener('change', updateDash);
     </script>
 </body>
 </html>
