@@ -1,5 +1,5 @@
 {
-    "last_updated": "2026-09-18T15:18:20.995464+00:00",
+    "last_updated": "2026-09-18T16:13:07.281278+00:00",
     "slate": "2026-09-20",
     "target_date": "2026-09-20",
     "team_stats": {
@@ -627,7 +627,7 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": 132,
+                    "away": 131,
                     "home": -149
                 },
                 "spreads": {
@@ -637,16 +637,16 @@
                     "home_line": -3.0
                 },
                 "totals": {
-                    "over": 103,
-                    "under": -120,
-                    "total": 46.5
+                    "over": -111,
+                    "under": -105,
+                    "total": 45.5
                 },
-                "away_ml_ev": -7.8,
-                "home_ml_ev": 0.7,
+                "away_ml_ev": -8.0,
+                "home_ml_ev": 0.6,
                 "away_sp_ev": -13.8,
                 "home_sp_ev": 13.6,
-                "over_ev": -2.0,
-                "under_ev": -5.2
+                "over_ev": -2.5,
+                "under_ev": -4.9
             }
         },
         {
@@ -1539,7 +1539,7 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": 132,
+                    "away": 131,
                     "home": -149
                 },
                 "spreads": {
@@ -1549,16 +1549,16 @@
                     "home_line": -3.0
                 },
                 "totals": {
-                    "over": 103,
-                    "under": -120,
-                    "total": 46.5
+                    "over": -111,
+                    "under": -105,
+                    "total": 45.5
                 },
-                "away_ml_ev": -7.8,
-                "home_ml_ev": 0.7,
+                "away_ml_ev": -8.0,
+                "home_ml_ev": 0.6,
                 "away_sp_ev": -13.8,
                 "home_sp_ev": 13.6,
-                "over_ev": -2.0,
-                "under_ev": -5.2
+                "over_ev": -2.5,
+                "under_ev": -4.9
             }
         },
         {
