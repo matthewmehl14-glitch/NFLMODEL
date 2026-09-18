@@ -1,5 +1,5 @@
 {
-    "last_updated": "2026-09-18T17:56:10.235348+00:00",
+    "last_updated": "2026-09-18T18:09:28.450987+00:00",
     "slate": "2026-09-20",
     "target_date": "2026-09-20",
     "team_stats": {
@@ -497,12 +497,12 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": 333,
-                    "home": -416
+                    "away": 334,
+                    "home": -418
                 },
                 "spreads": {
                     "away": -113,
-                    "home": 101,
+                    "home": 100,
                     "away_line": 9.0,
                     "home_line": -9.0
                 },
@@ -511,10 +511,10 @@
                     "under": -111,
                     "total": 46.5
                 },
-                "away_ml_ev": 9.7,
+                "away_ml_ev": 9.8,
                 "home_ml_ev": -7.4,
-                "away_sp_ev": 13.6,
-                "home_sp_ev": -16.4,
+                "away_sp_ev": 13.5,
+                "home_sp_ev": -16.6,
                 "over_ev": -8.9,
                 "under_ev": 1.4
             }
@@ -1409,12 +1409,12 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": 333,
-                    "home": -416
+                    "away": 334,
+                    "home": -418
                 },
                 "spreads": {
                     "away": -113,
-                    "home": 101,
+                    "home": 100,
                     "away_line": 9.0,
                     "home_line": -9.0
                 },
@@ -1423,10 +1423,10 @@
                     "under": -111,
                     "total": 46.5
                 },
-                "away_ml_ev": 9.7,
+                "away_ml_ev": 9.8,
                 "home_ml_ev": -7.4,
-                "away_sp_ev": 13.6,
-                "home_sp_ev": -16.4,
+                "away_sp_ev": 13.5,
+                "home_sp_ev": -16.6,
                 "over_ev": -8.9,
                 "under_ev": 1.4
             }
