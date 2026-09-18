@@ -1,6 +1,12 @@
 import csv
+import sys
+import os
 import numpy as np
-from scraper_nfl import (
+
+# Ensure Python can import from the same folder regardless of working directory
+sys.path.append(os.path.dirname(__file__))
+
+from run_simulations import (
     get_blended_nfl_stats,
     simulate_nfl_game,
     proportional_devig,
@@ -81,7 +87,13 @@ def run_backtest(target_date=None, flat_bet=25.0):
         'TOTAL': {'W': 0, 'L': 0, 'P': 0}
     }
 
-    with open('history.csv', mode='r', encoding='utf-8') as f:
+    # Use the root-level history.csv if running from repo root
+    history_file = 'history.csv'
+    if not os.path.exists(history_file):
+        # Fallback if run from inside src/
+        history_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'history.csv')
+
+    with open(history_file, mode='r', encoding='utf-8') as f:
         reader = list(csv.DictReader(f))
 
     for row in reader:
