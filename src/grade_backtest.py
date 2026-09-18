@@ -14,9 +14,6 @@ from scraper_nfl import (
 # Seed for consistent simulations
 np.random.seed(42)
 
-# Specific dates for NFL Week 1 (2026)
-WEEK_1_DATES = ["2026-09-10", "2026-09-11", "2026-09-12", "2026-09-13", "2026-09-14"]
-
 def backtest_safe_float(val):
     if val is None: return None
     val_str = str(val).strip().lower()
@@ -25,6 +22,10 @@ def backtest_safe_float(val):
         return float(val_str)
     except ValueError:
         return None
+
+def format_odds(odds):
+    if odds is None: return "N/A"
+    return f"{odds:+.0f}"
 
 def evaluate_bet(market_type, pick, row, bet_amount=25.0):
     away_score = backtest_safe_float(row.get('Actual_Away_Score'))
@@ -62,7 +63,7 @@ def evaluate_bet(market_type, pick, row, bet_amount=25.0):
         profit = bet_amount * (100 / 110) if won else -bet_amount
         return profit, ('win' if won else 'loss')
 
-def run_backtest(flat_bet=25.0):
+def run_backtest(target_date=None, flat_bet=25.0):
     # Tiered EV Hurdles
     ml_min, ml_max = 3.0, 10.0
     sp_min, sp_max = 1.5, 7.0
@@ -83,11 +84,9 @@ def run_backtest(flat_bet=25.0):
     with open('history.csv', mode='r', encoding='utf-8') as f:
         reader = list(csv.DictReader(f))
 
-    print(f"\n--- REPLAYING WEEK 1 WITH FLAT ${flat_bet:.2f} BETS (QB ISOLATION ENGINE) ---\n")
-
     for row in reader:
-        # Strictly filter for Week 1 Dates
-        if row['Date'] not in WEEK_1_DATES:
+        date = row.get('Date', 'YYYY-MM-DD')
+        if target_date and date != target_date:
             continue
             
         away_score = backtest_safe_float(row.get('Actual_Away_Score'))
@@ -106,6 +105,8 @@ def run_backtest(flat_bet=25.0):
         
         total_line = backtest_safe_float(row.get('Pinnacle_Total_Line'))
         spread_line = backtest_safe_float(row.get('Pinnacle_Home_Spread'))
+        away_sp = backtest_safe_float(row.get('Pinnacle_Away_Spread'))
+        home_sp = backtest_safe_float(row.get('Pinnacle_Home_Spread'))
         away_ml = backtest_safe_float(row.get('Pinnacle_Away_ML'))
         home_ml = backtest_safe_float(row.get('Pinnacle_Home_ML'))
 
@@ -138,7 +139,7 @@ def run_backtest(flat_bet=25.0):
                     total_staked += flat_bet
                     total_profit += p
                     results_summary['ML'][res[0].upper()] += 1
-                    print(f"Betted ML: {away} ({res.upper()}) | EV: {away_ml_ev:.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:.2f}")
+                    print(f"[{date}] BET ML: {away} ({format_odds(away_ml)}) vs {home} | {res.upper()} | EV: {away_ml_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
 
             elif home_ml_ev and ml_min <= home_ml_ev <= ml_max:
                 p, res = evaluate_bet('ML', 'home', row, flat_bet)
@@ -146,10 +147,10 @@ def run_backtest(flat_bet=25.0):
                     total_staked += flat_bet
                     total_profit += p
                     results_summary['ML'][res[0].upper()] += 1
-                    print(f"Betted ML: {home} ({res.upper()}) | EV: {home_ml_ev:.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:.2f}")
+                    print(f"[{date}] BET ML: {home} ({format_odds(home_ml)}) vs {away} | {res.upper()} | EV: {home_ml_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
 
         # --- Spread Check ---
-        if spread_line is not None and backtest_safe_float(row.get('Pinnacle_Away_Spread')) is not None:
+        if spread_line is not None and away_sp is not None:
             t_sp_a, t_sp_h = proportional_devig(-110, -110)
             model_away_sp = sim_res["spread_probs"]["away"]
             model_home_sp = sim_res["spread_probs"]["home"]
@@ -167,7 +168,7 @@ def run_backtest(flat_bet=25.0):
                     total_staked += flat_bet
                     total_profit += p
                     results_summary['SPREAD'][res[0].upper()] += 1
-                    print(f"Betted SPREAD: {away} ({res.upper()}) | EV: {away_sp_ev:.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:.2f}")
+                    print(f"[{date}] BET SPREAD: {away} {away_sp:+.1f} (-110) vs {home} | {res.upper()} | EV: {away_sp_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
 
             elif home_sp_ev and sp_min <= home_sp_ev <= sp_max:
                 p, res = evaluate_bet('SPREAD', 'home', row, flat_bet)
@@ -175,7 +176,7 @@ def run_backtest(flat_bet=25.0):
                     total_staked += flat_bet
                     total_profit += p
                     results_summary['SPREAD'][res[0].upper()] += 1
-                    print(f"Betted SPREAD: {home} ({res.upper()}) | EV: {home_sp_ev:.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:.2f}")
+                    print(f"[{date}] BET SPREAD: {home} {home_sp:+.1f} (-110) vs {away} | {res.upper()} | EV: {home_sp_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
 
         # --- Totals Check ---
         if total_line is not None:
@@ -196,7 +197,7 @@ def run_backtest(flat_bet=25.0):
                     total_staked += flat_bet
                     total_profit += p
                     results_summary['TOTAL'][res[0].upper()] += 1
-                    print(f"Betted TOTAL: OVER {total_line} in {away}@{home} ({res.upper()}) | EV: {over_ev:.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:.2f}")
+                    print(f"[{date}] BET TOTAL: OVER {total_line} ({away}@{home}) | {res.upper()} | EV: {over_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
 
             elif under_ev and tot_min <= under_ev <= tot_max:
                 p, res = evaluate_bet('TOTAL', 'under', row, flat_bet)
@@ -204,19 +205,23 @@ def run_backtest(flat_bet=25.0):
                     total_staked += flat_bet
                     total_profit += p
                     results_summary['TOTAL'][res[0].upper()] += 1
-                    print(f"Betted TOTAL: UNDER {total_line} in {away}@{home} ({res.upper()}) | EV: {under_ev:.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:.2f}")
+                    print(f"[{date}] BET TOTAL: UNDER {total_line} ({away}@{home}) | {res.upper()} | EV: {under_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
 
     roi = (total_profit / total_staked * 100) if total_staked > 0 else 0.0
+    total_bets = sum(results_summary['ML'].values()) + sum(results_summary['SPREAD'].values()) + sum(results_summary['TOTAL'].values())
     
-    print("\n--- FINAL WEEK 1 BACKTEST RESULTS ---")
+    print("\n--------------------------------------------------")
+    print("                FINAL SUMMARY")
+    print("--------------------------------------------------")
     print(f"Games Evaluated:  {games_evaluated}")
-    print(f"Total Bets Placed: {sum(results_summary['ML'].values()) + sum(results_summary['SPREAD'].values()) + sum(results_summary['TOTAL'].values())}")
+    print(f"Total Bets Placed: {total_bets}")
     print(f"Moneyline Record: {results_summary['ML']['W']}-{results_summary['ML']['L']}-{results_summary['ML']['P']}")
     print(f"Spread Record:    {results_summary['SPREAD']['W']}-{results_summary['SPREAD']['L']}-{results_summary['SPREAD']['P']}")
     print(f"Totals Record:    {results_summary['TOTAL']['W']}-{results_summary['TOTAL']['L']}-{results_summary['TOTAL']['P']}")
     print(f"Total Staked:     ${total_staked:.2f}")
-    print(f"Net Profit:       ${total_profit:.2f}")
-    print(f"Recalibrated ROI: {roi:.2f}%")
+    print(f"Net Profit:       ${total_profit:+.2f}")
+    print(f"Strategy ROI:     {roi:.2f}%")
+    print("==================================================")
 
 if __name__ == '__main__':
     run_backtest()
