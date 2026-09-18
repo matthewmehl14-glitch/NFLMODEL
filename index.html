@@ -1,174 +1,516 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NFL Monte Carlo EV Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
-  <div class="max-w-6xl mx-auto px-4 py-8">
-    
-    <header class="border-b border-slate-800 pb-6 mb-8 flex justify-between items-end">
-      <div>
-        <h1 class="text-3xl font-black tracking-tight text-white">
-          <span class="text-red-500">NFL</span> MONTE CARLO <span class="text-blue-500">ENGINE</span>
-        </h1>
-        <p class="text-slate-400 text-sm mt-1">Automated Model Projections vs. Pinnacle Lines</p>
-      </div>
-      
-      <!-- Live ROI Badge -->
-      <div id="roi-badge" class="flex space-x-6 bg-slate-900 border border-slate-800 px-5 py-3 rounded-xl shadow-lg hidden">
-        <div>
-          <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Record</p>
-          <p id="stat-wlp" class="text-sm font-mono font-bold text-slate-200">-</p>
-        </div>
-        <div>
-          <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Net Profit</p>
-          <p id="stat-profit" class="text-sm font-mono font-bold text-slate-200">-</p>
-        </div>
-        <div>
-          <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">ROI</p>
-          <p id="stat-roi" class="text-sm font-mono font-bold text-slate-200">-</p>
-        </div>
-      </div>
-    </header>
-
-    <main>
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-lg font-bold uppercase tracking-wider text-slate-200">Current Week Slate</h2>
-        <span id="game-count" class="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">Loading games...</span>
-      </div>
-
-      <div id="games-container" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <!-- Cards render here -->
-      </div>
-    </main>
-  </div>
-
-  <script>
-    async function loadRoiStats() {
-      try {
-        const res = await fetch('data/roi_stats.json');
-        if (!res.ok) return;
-        const stats = await res.json();
-        
-        document.getElementById('roi-badge').classList.remove('hidden');
-        document.getElementById('stat-wlp').innerText = `${stats.wins}-${stats.losses}-${stats.pushes}`;
-        
-        const profitEl = document.getElementById('stat-profit');
-        profitEl.innerText = `${stats.profit > 0 ? '+' : ''}$${stats.profit.toFixed(2)}`;
-        profitEl.className = `text-sm font-mono font-bold ${stats.profit > 0 ? 'text-emerald-400' : (stats.profit < 0 ? 'text-rose-400' : 'text-slate-200')}`;
-        
-        const roiEl = document.getElementById('stat-roi');
-        roiEl.innerText = `${stats.roi > 0 ? '+' : ''}${stats.roi}%`;
-        roiEl.className = `text-sm font-mono font-bold ${stats.roi > 0 ? 'text-emerald-400' : (stats.roi < 0 ? 'text-rose-400' : 'text-slate-200')}`;
-      } catch (err) {
-        console.log("Waiting on graded backtest data...");
-      }
-    }
-
-    async function loadSlate() {
-      const container = document.getElementById('games-container');
-      const countBadge = document.getElementById('game-count');
-
-      try {
-        const res = await fetch('data/upcoming_slate.json');
-        if (!res.ok) throw new Error('Data file not available yet');
-        const games = await res.json();
-        
-        countBadge.innerText = `${games.length} Games Available`;
-
-        if (games.length === 0) {
-          container.innerHTML = `
-            <div class="col-span-full border border-dashed border-slate-800 rounded-lg p-8 text-center text-slate-500">
-              <p class="text-sm font-medium text-slate-400">No games currently scheduled within the 5-day window.</p>
-            </div>
-          `;
-          return;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFL +EV Projection Engine</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0B1120;
+            --card-bg: #131E32;
+            --border-color: #1E293B;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --cyan-team: #00B4D8;
+            --red-team: #FF4D4D;
+            --gold: #F59E0B;
         }
 
-        container.innerHTML = games.map(game => {
-          const isAwayTarget = game.target_team === game.away_team;
-          const isHomeTarget = game.target_team === game.home_team;
+        * { box-sizing: border-box; }
 
-          return `
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg relative flex flex-col justify-between overflow-hidden">
-              <div class="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-red-600 via-slate-700 to-blue-600"></div>
-              
-              <div>
-                <div class="flex justify-between items-center mb-4">
-                  <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                    ${new Date(game.commence_time).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                  <span class="text-[11px] font-mono text-slate-400">
-                    Pinnacle: <strong class="text-slate-200">${game.pinnacle_away_line || 'Spread Open'}</strong>
-                  </span>
-                </div>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-                <div class="space-y-2.5 mb-5">
-                  <div class="flex justify-between items-center p-3 rounded-lg border transition-all ${
-                    isAwayTarget
-                      ? 'bg-red-950/40 border-red-500/70 shadow-inner'
-                      : 'bg-slate-950/60 border-slate-800/80'
-                  }">
-                    <div class="flex items-center space-x-2.5">
-                      <span class="w-2.5 h-2.5 rounded-full ${isAwayTarget ? 'bg-red-500 ring-4 ring-red-500/20' : 'bg-transparent'}"></span>
-                      <span class="font-bold text-red-400 text-sm tracking-wide">${game.away_team}</span>
-                      ${isAwayTarget ? '<span class="text-[10px] uppercase font-bold bg-red-900/60 text-red-200 px-1.5 py-0.5 rounded">Value Side</span>' : ''}
-                    </div>
-                    <span class="text-xs font-mono bg-slate-800/90 px-2.5 py-1 rounded text-slate-300">Model: ${game.model_away_prob}%</span>
-                  </div>
+        .header-content {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-                  <div class="flex justify-between items-center p-3 rounded-lg border transition-all ${
-                    isHomeTarget
-                      ? 'bg-blue-950/40 border-blue-500/70 shadow-inner'
-                      : 'bg-slate-950/60 border-slate-800/80'
-                  }">
-                    <div class="flex items-center space-x-2.5">
-                      <span class="w-2.5 h-2.5 rounded-full ${isHomeTarget ? 'bg-blue-500 ring-4 ring-blue-500/20' : 'bg-transparent'}"></span>
-                      <span class="font-bold text-blue-400 text-sm tracking-wide">${game.home_team}</span>
-                      ${isHomeTarget ? '<span class="text-[10px] uppercase font-bold bg-blue-900/60 text-blue-200 px-1.5 py-0.5 rounded">Value Side</span>' : ''}
-                    </div>
-                    <span class="text-xs font-mono bg-slate-800/90 px-2.5 py-1 rounded text-slate-300">Model: ${game.model_home_prob}%</span>
-                  </div>
-                </div>
-              </div>
+        h2 {
+            margin: 0 0 8px 0;
+            font-size: 22px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
 
-              <div class="pt-3 border-t border-slate-800/80 bg-slate-950/70 -mx-5 -mb-5 p-4 rounded-b-xl flex items-center justify-between">
-                <div>
-                  <div class="text-[10px] uppercase font-bold tracking-wider text-slate-500">Target Play</div>
-                  <div class="text-base font-black text-emerald-400 font-mono tracking-tight flex items-center gap-1.5 mt-0.5">
-                    <span>⚡</span> ${game.recommended_bet}
-                  </div>
-                </div>
-                <div class="text-right">
-                  <div class="text-[10px] uppercase font-bold tracking-wider text-slate-500">Model Edge</div>
-                  <span class="inline-block mt-0.5 text-xs font-mono font-bold px-2 py-0.5 rounded ${
-                    game.ev > 0 
-                      ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' 
-                      : 'bg-rose-950 text-rose-400 border border-rose-800'
-                  }">
-                    ${game.ev > 0 ? '+' : ''}${game.ev}% EV
-                  </span>
-                </div>
-              </div>
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin: 0 0 12px 0;
+        }
+
+        .update-badge {
+            display: inline-block;
+            background: rgba(0, 180, 216, 0.15);
+            color: var(--cyan-team);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 860px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        select {
+            width: 100%;
+            max-width: 600px;
+            padding: 12px;
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .prediction-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--gold);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .prob-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .team-prob-box {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .team-prob-box.right {
+            text-align: right;
+            align-items: flex-end;
+        }
+
+        .team-logo {
+            width: 54px;
+            height: 54px;
+            object-fit: contain;
+            margin-bottom: 2px;
+        }
+
+        .prob-val {
+            font-size: 34px;
+            font-weight: 800;
+        }
+
+        .prob-name {
+            font-size: 18px;
+            color: var(--text-main);
+            font-weight: bold;
+        }
+
+        .fair-line {
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 4px;
+        }
+
+        .market-section-title {
+            text-align: center;
+            font-size: 11px;
+            color: var(--gold);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        .market-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 10px 14px;
+        }
+
+        .market-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .market-item.right {
+            text-align: right;
+            align-items: flex-end;
+        }
+
+        .pinny-line {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            background: #1e293b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .ev-tag {
+            font-size: 12px;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .ev-positive {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+        }
+
+        .ev-negative {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+
+        .ev-target {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+        }
+
+        .prob-bar-container {
+            height: 10px;
+            width: 100%;
+            background-color: var(--red-team);
+            border-radius: 5px;
+            overflow: hidden;
+            display: flex;
+            margin-top: 6px;
+        }
+
+        .prob-bar-fill {
+            height: 100%;
+            background-color: var(--cyan-team);
+            transition: width 0.5s ease-in-out;
+        }
+
+        .total-banner {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .total-banner span {
+            color: var(--text-main);
+            font-weight: bold;
+        }
+
+        .chart-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-content">
+        <h2>NFL Matchup Prediction Engine</h2>
+        <p class="subtitle" id="date-subtitle">Loading Weekly Slate...</p>
+        <div class="update-badge" id="update-badge">Last Ran: Loading...</div>
+    </div>
+
+    <div class="container">
+        <div class="controls">
+            <select id="game-select"></select>
+        </div>
+
+        <div class="prediction-card">
+            <div class="card-header">
+                <span>Monte Carlo Projections (10,000 Sims)</span>
+                <span id="proj-total-badge">Proj. Total: --</span>
             </div>
-          `;
-        }).join('');
-      } catch (err) {
-        countBadge.innerText = '0 Games Loaded';
-        container.innerHTML = `
-          <div class="col-span-full border border-dashed border-slate-800 rounded-lg p-8 text-center text-slate-500">
-            <p class="font-medium text-slate-400 mb-1">Awaiting Slate Data</p>
-            <p class="text-xs">Run the workflow under the <strong>Actions</strong> tab to generate <code class="text-blue-400">data/upcoming_slate.json</code>.</p>
-          </div>
-        `;
-      }
-    }
 
-    loadRoiStats();
-    loadSlate();
-  </script>
+            <!-- Team Projections & Win Probabilities -->
+            <div class="prob-row">
+                <div class="team-prob-box">
+                    <img id="away-logo" class="team-logo" src="" alt="Away">
+                    <span class="prob-val" id="away-prob" style="color: var(--cyan-team)">--%</span>
+                    <span class="prob-name" id="away-name">Away Team</span>
+                    <span class="fair-line" id="away-fair-ml">Fair ML: --</span>
+                    <span class="fair-line" id="away-fair-sp">Fair Spread: --</span>
+                </div>
+                <div class="team-prob-box right">
+                    <img id="home-logo" class="team-logo" src="" alt="Home">
+                    <span class="prob-val" id="home-prob" style="color: var(--red-team)">--%</span>
+                    <span class="prob-name" id="home-name">Home Team</span>
+                    <span class="fair-line" id="home-fair-ml">Fair ML: --</span>
+                    <span class="fair-line" id="home-fair-sp">Fair Spread: --</span>
+                </div>
+            </div>
+
+            <div class="prob-bar-container">
+                <div class="prob-bar-fill" id="prob-bar" style="width: 50%;"></div>
+            </div>
+
+            <div class="total-banner">
+                Projected Score: <span id="proj-score">--</span>
+            </div>
+
+            <!-- Pinnacle Moneyline Market -->
+            <div class="market-section-title">Pinnacle Moneyline Market</div>
+            <div class="market-row">
+                <div class="market-item">
+                    <div>
+                        <span class="pinny-line" id="away-ml-pinny">PINN: --</span>
+                        <span class="ev-tag" id="away-ml-ev">EV: --</span>
+                    </div>
+                </div>
+                <div class="market-item right">
+                    <div>
+                        <span class="pinny-line" id="home-ml-pinny">PINN: --</span>
+                        <span class="ev-tag" id="home-ml-ev">EV: --</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pinnacle Spread Market -->
+            <div class="market-section-title">Pinnacle Spread Market</div>
+            <div class="market-row">
+                <div class="market-item">
+                    <div>
+                        <span class="pinny-line" id="away-sp-pinny">PINN: --</span>
+                        <span class="ev-tag" id="away-sp-ev">EV: --</span>
+                    </div>
+                </div>
+                <div class="market-item right">
+                    <div>
+                        <span class="pinny-line" id="home-sp-pinny">PINN: --</span>
+                        <span class="ev-tag" id="home-sp-ev">EV: --</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pinnacle Totals Market -->
+            <div id="totals-container" style="display: none;">
+                <div class="market-section-title">Pinnacle Total Market</div>
+                <div class="market-row">
+                    <div class="market-item">
+                        <div>
+                            <span class="pinny-line" id="over-pinny">O --</span>
+                            <span class="ev-tag" id="over-ev">EV: --</span>
+                        </div>
+                    </div>
+                    <div class="market-item right">
+                        <div>
+                            <span class="pinny-line" id="under-pinny">U --</span>
+                            <span class="ev-tag" id="under-ev">EV: --</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="spiderChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let todaysGames = [];
+        let spiderChart = null;
+        const stats = ['off_epa_per_play', 'off_pass_epa', 'off_rush_epa', 'def_epa_per_play', 'def_pass_epa', 'def_rush_epa'];
+        const statLabels = ['Offense EPA/Play', 'Pass Offense EPA', 'Rush Offense EPA', 'Defense EPA/Play', 'Pass Defense EPA', 'Rush Defense EPA'];
+
+        function probToMoneyline(prob) {
+            const p = prob / 100;
+            if (p <= 0 || p >= 1) return "--";
+            if (p >= 0.5) return Math.round((-100 * p) / (1 - p)).toString();
+            return `+${Math.round((100 * (1 - p)) / p)}`;
+        }
+
+        function setEV(elementId, evValue, targetThreshold) {
+            const el = document.getElementById(elementId);
+            if (evValue === null || evValue === undefined || evValue === 'N/A') {
+                el.textContent = "EV: N/A";
+                el.className = "ev-tag";
+                return;
+            }
+            const sign = evValue > 0 ? '+' : '';
+            
+            // Dynamic Highlight: Matches your backtest hurdle requirements
+            if (evValue >= targetThreshold) {
+                el.innerHTML = `🔥 TARGET: ${sign}${evValue}%`;
+                el.className = `ev-tag ev-target`;
+            } else {
+                el.textContent = `EV: ${sign}${evValue}%`;
+                el.className = `ev-tag ${evValue > 0 ? 'ev-positive' : 'ev-negative'}`;
+            }
+        }
+
+        fetch('./data.json?t=' + new Date().getTime(), { cache: 'no-store' })
+            .then(res => res.json())
+            .then(data => {
+                // FIXED: Clearly visible Last Updated timestamp
+                if (data.last_updated) {
+                    const updateTime = new Date(data.last_updated);
+                    const options = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' };
+                    document.getElementById('update-badge').textContent = "Last Ran: " + updateTime.toLocaleString('en-US', options);
+                }
+
+                todaysGames = data.todays_games || [];
+                document.getElementById('date-subtitle').textContent = `Slate for ${data.date || data.target_date || 'Current'} (10,000 Sims per game)`;
+
+                const sel = document.getElementById('game-select');
+                sel.innerHTML = '';
+                if (todaysGames.length === 0) {
+                    sel.innerHTML = '<option>No games found for this slate</option>';
+                    return;
+                }
+
+                todaysGames.forEach((g, i) => sel.appendChild(new Option(`${g.away_team} @ ${g.home_team}`, i)));
+                initChart();
+                updateDash();
+            })
+            .catch(err => {
+                console.error("Error loading JSON:", err);
+                document.getElementById('date-subtitle').textContent = "Error loading data.";
+            });
+
+        function initChart() {
+            spiderChart = new Chart(document.getElementById('spiderChart').getContext('2d'), {
+                type: 'radar',
+                data: {
+                    labels: statLabels,
+                    datasets: [
+                        { label: 'Away', data: [], backgroundColor: 'rgba(0, 180, 216, 0.35)', borderColor: '#00B4D8', pointBackgroundColor: '#00B4D8' },
+                        { label: 'Home', data: [], backgroundColor: 'rgba(255, 77, 77, 0.35)', borderColor: '#FF4D4D', pointBackgroundColor: '#FF4D4D' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        r: {
+                            min: 0, max: 100,
+                            ticks: { display: false },
+                            grid: { color: '#1E293B' },
+                            angleLines: { color: '#1E293B' },
+                            pointLabels: { color: '#E2E8F0', font: { size: 12, weight: 'bold' } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function updateDash() {
+            if (!todaysGames.length) return;
+            const game = todaysGames[document.getElementById('game-select').value];
+            const sim = game.simulation || {};
+            const mkt = game.market_data || {};
+
+            // Names & Logos
+            document.getElementById('away-name').textContent = game.away_team;
+            document.getElementById('home-name').textContent = game.home_team;
+            document.getElementById('away-logo').src = `https://a.espncdn.com/i/teamlogos/nfl/500/${game.away_team.toLowerCase()}.png`;
+            document.getElementById('home-logo').src = `https://a.espncdn.com/i/teamlogos/nfl/500/${game.home_team.toLowerCase()}.png`;
+
+            // Projections
+            document.getElementById('away-prob').textContent = `${sim.away_win_prob || '--'}%`;
+            document.getElementById('home-prob').textContent = `${sim.home_win_prob || '--'}%`;
+            document.getElementById('prob-bar').style.width = `${sim.away_win_prob || 50}%`;
+            document.getElementById('proj-total-badge').textContent = `Proj. Total: ${sim.proj_total || '--'}`;
+            document.getElementById('proj-score').textContent = `${game.away_team} ${sim.away_proj || 0} - ${game.home_team} ${sim.home_proj || 0}`;
+
+            // Fair Lines
+            document.getElementById('away-fair-ml').textContent = `Fair ML: ${probToMoneyline(sim.away_win_prob)}`;
+            document.getElementById('home-fair-ml').textContent = `Fair ML: ${probToMoneyline(sim.home_win_prob)}`;
+            const fairMargin = (sim.home_proj - sim.away_proj).toFixed(1);
+            document.getElementById('away-fair-sp').textContent = `Fair Spread: ${fairMargin > 0 ? '+' : ''}${fairMargin}`;
+            document.getElementById('home-fair-sp').textContent = `Fair Spread: ${fairMargin > 0 ? '-' : '+'}${Math.abs(fairMargin)}`;
+
+            // Pinnacle Moneyline (Requires 3.0% EV to trigger Target badge)
+            document.getElementById('away-ml-pinny').textContent = `PINN: ${mkt.h2h?.away > 0 ? '+' : ''}${mkt.h2h?.away || 'N/A'}`;
+            document.getElementById('home-ml-pinny').textContent = `PINN: ${mkt.h2h?.home > 0 ? '+' : ''}${mkt.h2h?.home || 'N/A'}`;
+            setEV('away-ml-ev', mkt.away_ml_ev, 3.0);
+            setEV('home-ml-ev', mkt.home_ml_ev, 3.0);
+
+            // Pinnacle Spread (Requires 1.5% EV to trigger Target badge)
+            const spAwayLine = mkt.spreads?.away_line;
+            const spHomeLine = mkt.spreads?.home_line;
+            document.getElementById('away-sp-pinny').textContent = `PINN: ${spAwayLine > 0 ? '+' : ''}${spAwayLine || '-'} (${mkt.spreads?.away > 0 ? '+' : ''}${mkt.spreads?.away || 'N/A'})`;
+            document.getElementById('home-sp-pinny').textContent = `PINN: ${spHomeLine > 0 ? '+' : ''}${spHomeLine || '-'} (${mkt.spreads?.home > 0 ? '+' : ''}${mkt.spreads?.home || 'N/A'})`;
+            setEV('away-sp-ev', mkt.away_sp_ev, 1.5);
+            setEV('home-sp-ev', mkt.home_sp_ev, 1.5);
+
+            // Pinnacle Totals (Requires 1.5% EV to trigger Target badge)
+            if (mkt.totals?.total && mkt.totals.total !== 'N/A') {
+                document.getElementById('totals-container').style.display = 'block';
+                document.getElementById('over-pinny').textContent = `O ${mkt.totals.total} (${mkt.totals.over > 0 ? '+' : ''}${mkt.totals.over || 'N/A'})`;
+                document.getElementById('under-pinny').textContent = `U ${mkt.totals.total} (${mkt.totals.under > 0 ? '+' : ''}${mkt.totals.under || 'N/A'})`;
+                setEV('over-ev', mkt.over_ev, 1.5);
+                setEV('under-ev', mkt.under_ev, 1.5);
+            } else {
+                document.getElementById('totals-container').style.display = 'none';
+            }
+
+            // Radar Chart Update
+            if (game.away_stats && game.home_stats) {
+                spiderChart.data.datasets[0].label = game.away_team;
+                spiderChart.data.datasets[0].data = stats.map(s => ((game.away_stats[s] + 0.3) / 0.6) * 100);
+                spiderChart.data.datasets[1].label = game.home_team;
+                spiderChart.data.datasets[1].data = stats.map(s => ((game.home_stats[s] + 0.3) / 0.6) * 100);
+                spiderChart.update();
+            }
+        }
+
+        document.getElementById('game-select').addEventListener('change', updateDash);
+    </script>
 </body>
 </html>
