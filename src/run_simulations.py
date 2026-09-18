@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import csv
 import requests
@@ -148,14 +149,15 @@ def aggregate_team_epa_qb_isolated(pbp):
                 dropbacks=("epa", "count"),
                 qb_epa=("epa", "mean")
             ).reset_index()
-            primary_qb = qb_stats.loc[qb_stats["dropbacks"].idxmax()]
-            qb_name = primary_qb["passer_player_name"]
-            qb_epa = primary_qb["qb_epa"]
-            qb_dropbacks = primary_qb["dropbacks"]
+            if not qb_stats.empty:
+                primary_qb = qb_stats.loc[qb_stats["dropbacks"].idxmax()]
+                qb_name = primary_qb["passer_player_name"]
+                qb_epa = primary_qb["qb_epa"]
+                qb_dropbacks = primary_qb["dropbacks"]
+            else:
+                qb_name, qb_epa, qb_dropbacks = "Unknown", league_pass_epa, 0
         else:
-            qb_name = "Unknown"
-            qb_epa = league_pass_epa
-            qb_dropbacks = 0
+            qb_name, qb_epa, qb_dropbacks = "Unknown", league_pass_epa, 0
 
         # Bayesian regression on QB dropbacks
         adj_qb_epa = ((qb_dropbacks * qb_epa) + (150 * league_pass_epa)) / (qb_dropbacks + 150)
@@ -236,8 +238,7 @@ def fit_points_calibration(prior_pbp, prior_stats, prior_league_epa, prior_leagu
         beta = float(coefficients[0])
         hfa = float(coefficients[1])
     except Exception:
-        beta = DEFAULT_EPA_TO_POINTS_PER_PLAY
-        hfa = 1.8
+        beta, hfa = DEFAULT_EPA_TO_POINTS_PER_PLAY, 1.8
 
     beta = float(np.clip(beta, 0.25, 1.25))
     hfa = float(np.clip(hfa, 0.0, 4.0))
@@ -380,8 +381,7 @@ def simulate_nfl_game(away_stats, home_stats, league_points=21.5, league_epa=0.0
     }
 
 def grade_historical_scores():
-    # Resolve root and data directories
-    base_dir = os.path.dirname(os.path.dirname(__file__))
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     target_files = [
         os.path.join(base_dir, "history.csv"),
         os.path.join(base_dir, "data", "historical_log.csv")
@@ -389,70 +389,114 @@ def grade_historical_scores():
 
     for history_file in target_files:
         if not os.path.exists(history_file): continue
-        print(f"Checking for ungraded games in {os.path.basename(history_file)}...")
-        df = pd.read_csv(history_file)
-        if df.empty: continue
-        
-        is_ungraded = (df["Actual_Away_Score"].isna() | df["Actual_Away_Score"].astype(str).eq("N/A"))
-        ungraded_dates = df[is_ungraded]["Date"].dropna().unique()
-        if len(ungraded_dates) == 0:
-            continue
+        try:
+            with open(history_file, mode="r", encoding="utf-8") as f:
+                reader = list(csv.DictReader(f))
+            if not reader or "Actual_Away_Score" not in reader[0]:
+                continue
 
-        for target_date in ungraded_dates:
-            try:
-                dt = datetime.strptime(str(target_date), "%Y-%m-%d")
-            except ValueError: continue
-            
-            check_dates = [dt.strftime("%Y%m%d"), (dt + pd.Timedelta(days=1)).strftime("%Y%m%d"), (dt - pd.Timedelta(days=1)).strftime("%Y%m%d")]
+            ungraded_dates = set()
+            for r in reader:
+                score = str(r.get("Actual_Away_Score", "")).strip()
+                if score in ["", "N/A", "nan", "None"]:
+                    d = str(r.get("Date", "")).strip()
+                    if d: ungraded_dates.add(d)
+
+            if not ungraded_dates:
+                continue
+
             scores = {}
-
-            for dt_str in check_dates:
-                url = f"https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates={dt_str}"
+            for target_date in ungraded_dates:
                 try:
-                    resp = requests.get(url, timeout=10)
-                    if resp.status_code != 200: continue
-                    data = resp.json()
-                    for event in data.get("events", []):
-                        for comp in event.get("competitions", []):
-                            if not comp.get("status", {}).get("type", {}).get("completed", False): continue
-                            for team in comp.get("competitors", []):
-                                abbr = ESPN_TEAM_MAPPING.get(team.get("team", {}).get("name", ""))
-                                if abbr: scores[f"{abbr}_{team.get('homeAway')}"] = team.get("score", 0)
-                except Exception: continue
+                    dt = datetime.strptime(str(target_date), "%Y-%m-%d")
+                except ValueError:
+                    continue
 
-            for idx, row in df.iterrows():
-                if not (pd.isna(row["Actual_Away_Score"]) or str(row["Actual_Away_Score"]) == "N/A"): continue
-                away, home = row["Away_Team"], row["Home_Team"]
-                if f"{away}_away" in scores and f"{home}_home" in scores:
-                    df.at[idx, "Actual_Away_Score"] = scores[f"{away}_away"]
-                    df.at[idx, "Actual_Home_Score"] = scores[f"{home}_home"]
-                    print(f"Graded: {away} {scores[f'{away}_away']} @ {home} {scores[f'{home}_home']}")
+                check_dates = [
+                    dt.strftime("%Y%m%d"),
+                    (dt + pd.Timedelta(days=1)).strftime("%Y%m%d"),
+                    (dt - pd.Timedelta(days=1)).strftime("%Y%m%d")
+                ]
 
-        df.to_csv(history_file, index=False)
+                for dt_str in check_dates:
+                    url = f"https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates={dt_str}"
+                    try:
+                        resp = requests.get(url, timeout=10)
+                        if resp.status_code != 200: continue
+                        data = resp.json()
+                        for event in data.get("events", []):
+                            for comp in event.get("competitions", []):
+                                if not comp.get("status", {}).get("type", {}).get("completed", False): continue
+                                for team in comp.get("competitors", []):
+                                    abbr = ESPN_TEAM_MAPPING.get(team.get("team", {}).get("name", ""))
+                                    if abbr:
+                                        scores[f"{abbr}_{team.get('homeAway')}"] = str(team.get("score", 0))
+                    except Exception:
+                        continue
+
+            updated = False
+            for r in reader:
+                score = str(r.get("Actual_Away_Score", "")).strip()
+                if score in ["", "N/A", "nan", "None"]:
+                    away = str(r.get("Away_Team", "")).strip()
+                    home = str(r.get("Home_Team", "")).strip()
+                    if f"{away}_away" in scores and f"{home}_home" in scores:
+                        r["Actual_Away_Score"] = scores[f"{away}_away"]
+                        r["Actual_Home_Score"] = scores[f"{home}_home"]
+                        updated = True
+                        print(f"Graded: {away} {scores[f'{away}_away']} @ {home} {scores[f'{home}_home']}")
+
+            if updated:
+                fieldnames = list(reader[0].keys())
+                with open(history_file, mode="w", newline="", encoding="utf-8") as f:
+                    writer = csv.DictWriter(f, fieldnames=fieldnames)
+                    writer.writeheader()
+                    writer.writerows(reader)
+        except Exception as e:
+            print(f"Warning in grade_historical_scores for {history_file}: {e}")
 
 def run_live_scraper():
     print("Running Live Odds Scraper & Building Dashboard JSON...")
-    if not ODDS_API_KEY: return
+    if not ODDS_API_KEY:
+        print("Warning: ODDS_API_KEY not set.")
+        return
 
     url = f"https://api.the-odds-api.com/v4/sports/{SPORT}/odds?regions={REGIONS}&markets={MARKETS}&bookmakers={BOOKMAKER}&oddsFormat=american&apiKey={ODDS_API_KEY}"
     try: response = requests.get(url, timeout=20)
-    except requests.RequestException: return
-    if response.status_code != 200: return
+    except requests.RequestException as exc:
+        print(f"Odds API request failed: {exc}")
+        return
+    if response.status_code != 200:
+        print(f"Odds API returned status {response.status_code}")
+        return
 
     games = response.json()
     epa_stats, league_points, league_epa, diagnostics = get_blended_nfl_stats(PRIOR_SEASON, CURRENT_SEASON)
 
-    base_dir = os.path.dirname(os.path.dirname(__file__))
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     os.makedirs(os.path.join(base_dir, "data"), exist_ok=True)
 
-    history_fields = ["Date", "Away_Team", "Home_Team", "Pinnacle_Away_ML", "Pinnacle_Home_ML", "Pinnacle_Away_Spread", "Pinnacle_Home_Spread", "Pinnacle_Total_Line", "Actual_Away_Score", "Actual_Home_Score"]
-    
+    history_fields = [
+        "Date", "Away_Team", "Home_Team",
+        "Pinnacle_Away_ML", "Pinnacle_Home_ML",
+        "Pinnacle_Away_Spread", "Pinnacle_Home_Spread",
+        "Pinnacle_Total_Line",
+        "Actual_Away_Score", "Actual_Home_Score"
+    ]
+
     primary_hist = os.path.join(base_dir, "history.csv")
-    if not os.path.exists(primary_hist):
-        with open(primary_hist, "w", newline="") as f: csv.writer(f).writerow(history_fields)
-    
-    try: existing_history = pd.read_csv(primary_hist)
-    except Exception: existing_history = pd.DataFrame(columns=history_fields)
+    data_hist = os.path.join(base_dir, "data", "historical_log.csv")
+
+    existing_rows = []
+    source_to_read = primary_hist if os.path.exists(primary_hist) else (data_hist if os.path.exists(data_hist) else None)
+    if source_to_read:
+        try:
+            with open(source_to_read, mode="r", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for r in reader:
+                    existing_rows.append(dict(r))
+        except Exception as e:
+            print(f"Error reading existing history: {e}")
 
     dashboard_games = []
     rng = np.random.default_rng(RANDOM_SEED)
@@ -493,31 +537,28 @@ def run_live_scraper():
                 if out.get("name") == "Over": total_line, over_odds = out.get("point", "N/A"), out.get("price", "N/A")
                 elif out.get("name") == "Under": under_odds = out.get("price", "N/A")
 
-        # Dynamic Upsert: update existing ungraded row or append new
-        match_idx = existing_history[
-            (existing_history["Away_Team"] == away) & 
-            (existing_history["Home_Team"] == home) &
-            (existing_history["Date"] == date_str)
-        ].index
+        # Update matching ungraded row or append new row using pure dictionary manipulation
+        matched = False
+        for r in existing_rows:
+            if r.get("Date") == date_str and r.get("Away_Team") == away and r.get("Home_Team") == home:
+                matched = True
+                curr_score = str(r.get("Actual_Away_Score", "")).strip()
+                if curr_score in ["", "N/A", "nan", "None"]:
+                    r["Pinnacle_Away_ML"] = str(away_ml)
+                    r["Pinnacle_Home_ML"] = str(home_ml)
+                    r["Pinnacle_Away_Spread"] = str(away_sp)
+                    r["Pinnacle_Home_Spread"] = str(home_sp)
+                    r["Pinnacle_Total_Line"] = str(total_line)
+                break
 
-        if not match_idx.empty:
-            i = match_idx[0]
-            # If game hasn't been played yet, update lines with latest Pinnacle movement
-            if pd.isna(existing_history.at[i, "Actual_Away_Score"]) or str(existing_history.at[i, "Actual_Away_Score"]) == "N/A":
-                existing_history.at[i, "Pinnacle_Away_ML"] = away_ml
-                existing_history.at[i, "Pinnacle_Home_ML"] = home_ml
-                existing_history.at[i, "Pinnacle_Away_Spread"] = away_sp
-                existing_history.at[i, "Pinnacle_Home_Spread"] = home_sp
-                existing_history.at[i, "Pinnacle_Total_Line"] = total_line
-        else:
-            new_row = pd.DataFrame([{
+        if not matched:
+            existing_rows.append({
                 "Date": date_str, "Away_Team": away, "Home_Team": home,
-                "Pinnacle_Away_ML": away_ml, "Pinnacle_Home_ML": home_ml,
-                "Pinnacle_Away_Spread": away_sp, "Pinnacle_Home_Spread": home_sp,
-                "Pinnacle_Total_Line": total_line,
+                "Pinnacle_Away_ML": str(away_ml), "Pinnacle_Home_ML": str(home_ml),
+                "Pinnacle_Away_Spread": str(away_sp), "Pinnacle_Home_Spread": str(home_sp),
+                "Pinnacle_Total_Line": str(total_line),
                 "Actual_Away_Score": "N/A", "Actual_Home_Score": "N/A"
-            }])
-            existing_history = pd.concat([existing_history, new_row], ignore_index=True)
+            })
 
         sim_res = simulate_nfl_game(epa_stats[away], epa_stats[home], league_points=league_points, league_epa=league_epa, hfa_points=diagnostics["calibration"]["hfa_points"], epa_to_points=diagnostics["calibration"]["epa_to_points_per_play"], total_line=total_line, spread_line=home_sp, num_sims=NUM_SIMS, rng=rng)
 
@@ -529,7 +570,7 @@ def run_live_scraper():
                 b_home = ((1.0 - ML_MARKET_WEIGHT) * (sim_res["home_win_prob"] / 100.0)) + (ML_MARKET_WEIGHT * t_home)
                 away_ml_ev = calculate_ev(b_away * 100.0, float(away_ml))
                 home_ml_ev = calculate_ev(b_home * 100.0, float(home_ml))
-            except: pass
+            except Exception: pass
 
         if away_sp_odds != "N/A" and home_sp_odds != "N/A":
             try:
@@ -539,7 +580,7 @@ def run_live_scraper():
                 b_sp_push = sim_res["spread_probs"]["push"]
                 away_sp_ev = calculate_ev(b_sp_a * 100.0, float(away_sp_odds), b_sp_push * 100.0)
                 home_sp_ev = calculate_ev(b_sp_h * 100.0, float(home_sp_odds), b_sp_push * 100.0)
-            except: pass
+            except Exception: pass
 
         if over_odds != "N/A" and under_odds != "N/A":
             try:
@@ -549,7 +590,7 @@ def run_live_scraper():
                 b_ou_push = sim_res["ou_probs"]["push"]
                 over_ev = calculate_ev(b_ou_o * 100.0, float(over_odds), b_ou_push * 100.0)
                 under_ev = calculate_ev(b_ou_u * 100.0, float(under_odds), b_ou_push * 100.0)
-            except: pass
+            except Exception: pass
 
         dashboard_games.append({
             "away_team": away, "home_team": home, "date": date_str, "target_date": date_str, "commence_time": game.get("commence_time"),
@@ -572,8 +613,16 @@ def run_live_scraper():
         })
 
     # Save to history.csv AND data/historical_log.csv
-    existing_history.to_csv(primary_hist, index=False)
-    existing_history.to_csv(os.path.join(base_dir, "data", "historical_log.csv"), index=False)
+    for target_path in [primary_hist, data_hist]:
+        try:
+            with open(target_path, mode="w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=history_fields)
+                writer.writeheader()
+                for r in existing_rows:
+                    clean_row = {k: r.get(k, "N/A") for k in history_fields}
+                    writer.writerow(clean_row)
+        except Exception as e:
+            print(f"Error saving to {target_path}: {e}")
 
     primary_date = dashboard_games[0]["date"] if dashboard_games else datetime.now(ZoneInfo(DISPLAY_TIMEZONE)).strftime("%Y-%m-%d")
     output_json = {
@@ -582,10 +631,12 @@ def run_live_scraper():
     }
 
     # Save to data.json AND data/upcoming_slate.json
-    with open(os.path.join(base_dir, "data.json"), "w") as f:
-        json.dump(output_json, f, indent=4)
-    with open(os.path.join(base_dir, "data", "upcoming_slate.json"), "w") as f:
-        json.dump(output_json, f, indent=4)
+    for json_path in [os.path.join(base_dir, "data.json"), os.path.join(base_dir, "data", "upcoming_slate.json")]:
+        try:
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(output_json, f, indent=4)
+        except Exception as e:
+            print(f"Error saving {json_path}: {e}")
 
     print(f"Scraping complete. Exported {len(dashboard_games)} games to root and data/ locations.")
 
