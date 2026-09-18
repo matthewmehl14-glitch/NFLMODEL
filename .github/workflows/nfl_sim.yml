@@ -31,6 +31,9 @@ jobs:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: python src/run_simulations.py
 
+      - name: Seed Week 1 Data
+        run: python src/seed_week1.py
+
       - name: Run NFL Backtest
         run: python src/grade_backtest.py
 
