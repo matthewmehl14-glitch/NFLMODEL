@@ -63,7 +63,6 @@ def evaluate_bet(market_type, pick, row, bet_amount=25.0):
         return profit, ('win' if won else 'loss')
 
 def get_walk_forward_stats(prior_pbp, current_pbp):
-    """Calculates baselines dynamically using ONLY data available before the kickoff date"""
     prior_stats, prior_league_stats, _ = aggregate_team_epa_qb_isolated(prior_pbp)
     
     if current_pbp.empty:
@@ -113,6 +112,12 @@ def get_walk_forward_stats(prior_pbp, current_pbp):
     
     return blended, league_points, league_epa, {"calibration": calibration}
 
+def get_ev_bucket(ev):
+    if ev < 3.0: return "1.5% to 3.0%"
+    elif ev < 5.0: return "3.0% to 5.0%"
+    elif ev < 7.0: return "5.0% to 7.0%"
+    else: return "7.0%+"
+
 def run_walk_forward_backtest(flat_bet=25.0):
     ml_min, ml_max = 3.0, 10.0
     sp_min, sp_max = 1.5, 7.0
@@ -139,9 +144,18 @@ def run_walk_forward_backtest(flat_bet=25.0):
     games_evaluated = 0
     total_staked = 0.0
     total_profit = 0.0
+    
     results_summary = {
         'ML': {'W': 0, 'L': 0, 'P': 0},
         'SPREAD': {'W': 0, 'L': 0, 'P': 0}
+    }
+
+    # Initialize Edge Buckets
+    edge_buckets = {
+        "1.5% to 3.0%": {'W': 0, 'L': 0, 'P': 0, 'staked': 0.0, 'profit': 0.0},
+        "3.0% to 5.0%": {'W': 0, 'L': 0, 'P': 0, 'staked': 0.0, 'profit': 0.0},
+        "5.0% to 7.0%": {'W': 0, 'L': 0, 'P': 0, 'staked': 0.0, 'profit': 0.0},
+        "7.0%+":        {'W': 0, 'L': 0, 'P': 0, 'staked': 0.0, 'profit': 0.0}
     }
 
     cached_stats_by_date = {}
@@ -196,12 +210,22 @@ def run_walk_forward_backtest(flat_bet=25.0):
                 if away_ml_ev and ml_min <= away_ml_ev <= ml_max:
                     p, res = evaluate_bet('ML', 'away', row, flat_bet)
                     if res != 'push':
+                        bkt = get_ev_bucket(away_ml_ev)
+                        edge_buckets[bkt]['W' if res == 'win' else 'L' if res == 'loss' else 'P'] += 1
+                        edge_buckets[bkt]['staked'] += flat_bet
+                        edge_buckets[bkt]['profit'] += p
+                        
                         total_staked += flat_bet; total_profit += p; results_summary['ML'][res[0].upper()] += 1
                         print(f"[{date}] BET ML: {away} ({format_odds(away_ml)}) vs {home} | {res.upper()} | EV: {away_ml_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
 
                 elif home_ml_ev and ml_min <= home_ml_ev <= ml_max:
                     p, res = evaluate_bet('ML', 'home', row, flat_bet)
                     if res != 'push':
+                        bkt = get_ev_bucket(home_ml_ev)
+                        edge_buckets[bkt]['W' if res == 'win' else 'L' if res == 'loss' else 'P'] += 1
+                        edge_buckets[bkt]['staked'] += flat_bet
+                        edge_buckets[bkt]['profit'] += p
+                        
                         total_staked += flat_bet; total_profit += p; results_summary['ML'][res[0].upper()] += 1
                         print(f"[{date}] BET ML: {home} ({format_odds(home_ml)}) vs {away} | {res.upper()} | EV: {home_ml_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
             except: pass
@@ -220,12 +244,22 @@ def run_walk_forward_backtest(flat_bet=25.0):
                 if away_sp_ev and sp_min <= away_sp_ev <= sp_max:
                     p, res = evaluate_bet('SPREAD', 'away', row, flat_bet)
                     if res != 'push':
+                        bkt = get_ev_bucket(away_sp_ev)
+                        edge_buckets[bkt]['W' if res == 'win' else 'L' if res == 'loss' else 'P'] += 1
+                        edge_buckets[bkt]['staked'] += flat_bet
+                        edge_buckets[bkt]['profit'] += p
+                        
                         total_staked += flat_bet; total_profit += p; results_summary['SPREAD'][res[0].upper()] += 1
                         print(f"[{date}] BET SPREAD: {away} {away_sp:+.1f} (-110) vs {home} | {res.upper()} | EV: {away_sp_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
 
                 elif home_sp_ev and sp_min <= home_sp_ev <= sp_max:
                     p, res = evaluate_bet('SPREAD', 'home', row, flat_bet)
                     if res != 'push':
+                        bkt = get_ev_bucket(home_sp_ev)
+                        edge_buckets[bkt]['W' if res == 'win' else 'L' if res == 'loss' else 'P'] += 1
+                        edge_buckets[bkt]['staked'] += flat_bet
+                        edge_buckets[bkt]['profit'] += p
+                        
                         total_staked += flat_bet; total_profit += p; results_summary['SPREAD'][res[0].upper()] += 1
                         print(f"[{date}] BET SPREAD: {home} {home_sp:+.1f} (-110) vs {away} | {res.upper()} | EV: {home_sp_ev:+.1f}% | Stake: ${flat_bet:.2f} | Profit: ${p:+.2f}")
             except: pass
@@ -233,6 +267,19 @@ def run_walk_forward_backtest(flat_bet=25.0):
     roi = (total_profit / total_staked * 100) if total_staked > 0 else 0.0
     total_bets = sum(results_summary['ML'].values()) + sum(results_summary['SPREAD'].values())
     
+    print("\n==================================================")
+    print("             EDGE BUCKET PERFORMANCE              ")
+    print("==================================================")
+    for bkt in ["1.5% to 3.0%", "3.0% to 5.0%", "5.0% to 7.0%", "7.0%+"]:
+        s = edge_buckets[bkt]
+        total_bkt_bets = s['W'] + s['L'] + s['P']
+        if total_bkt_bets > 0:
+            win_pct = (s['W'] / (s['W'] + s['L']) * 100) if (s['W'] + s['L']) > 0 else 0.0
+            bkt_roi = (s['profit'] / s['staked'] * 100) if s['staked'] > 0 else 0.0
+            print(f"[{bkt:<12}] Record: {s['W']:>2}-{s['L']:>2}-{s['P']:>2} ({win_pct:>5.1f}%) | ROI: {bkt_roi:>6.1f}% | Profit: ${s['profit']:>7.2f}")
+        else:
+            print(f"[{bkt:<12}] No bets placed in this range.")
+
     print("\n--------------------------------------------------")
     print("           FINAL 2025 SUMMARY (NO TOTALS)         ")
     print("--------------------------------------------------")
