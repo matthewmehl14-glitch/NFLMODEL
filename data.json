@@ -1,5 +1,5 @@
 {
-    "last_updated": "2026-09-24T10:35:12.295463+00:00",
+    "last_updated": "2026-09-24T15:32:28.868519+00:00",
     "slate": "2026-09-24",
     "target_date": "2026-09-24",
     "team_stats": {
@@ -432,26 +432,26 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": 212,
-                    "home": -249
+                    "away": 209,
+                    "home": -238
                 },
                 "spreads": {
-                    "away": -102,
+                    "away": 100,
                     "home": -110,
                     "away_line": 4.5,
                     "home_line": -4.5
                 },
                 "totals": {
                     "over": -105,
-                    "under": -109,
+                    "under": -107,
                     "total": 43.0
                 },
-                "away_ml_ev": 0.1,
-                "home_ml_ev": -4.8,
-                "away_sp_ev": 0.2,
-                "home_sp_ev": -5.7,
-                "over_ev": 5.2,
-                "under_ev": -7.8
+                "away_ml_ev": 0.4,
+                "home_ml_ev": -4.1,
+                "away_sp_ev": 0.9,
+                "home_sp_ev": -5.4,
+                "over_ev": 5.5,
+                "under_ev": -7.3
             }
         },
         {
@@ -562,24 +562,24 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": -148,
-                    "home": 131
+                    "away": -149,
+                    "home": 132
                 },
                 "spreads": {
-                    "away": 106,
-                    "home": -119,
-                    "away_line": -3.0,
-                    "home_line": 3.0
+                    "away": -116,
+                    "home": 103,
+                    "away_line": -2.5,
+                    "home_line": 2.5
                 },
                 "totals": {
                     "over": -110,
                     "under": -104,
                     "total": 42.0
                 },
-                "away_ml_ev": -5.6,
-                "home_ml_ev": 0.9,
-                "away_sp_ev": -8.9,
-                "home_sp_ev": 6.0,
+                "away_ml_ev": -5.7,
+                "home_ml_ev": 1.0,
+                "away_sp_ev": -12.6,
+                "home_sp_ev": 7.7,
                 "over_ev": -5.7,
                 "under_ev": 3.2
             }
@@ -757,26 +757,26 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": -143,
-                    "home": 126
+                    "away": -128,
+                    "home": 113
                 },
                 "spreads": {
-                    "away": 110,
-                    "home": -124,
-                    "away_line": -3.0,
-                    "home_line": 3.0
+                    "away": -105,
+                    "home": -107,
+                    "away_line": -2.0,
+                    "home_line": 2.0
                 },
                 "totals": {
-                    "over": -113,
+                    "over": -114,
                     "under": -101,
                     "total": 42.5
                 },
-                "away_ml_ev": -1.7,
-                "home_ml_ev": -4.8,
-                "away_sp_ev": 4.6,
-                "home_sp_ev": -5.8,
-                "over_ev": 1.4,
-                "under_ev": -8.0
+                "away_ml_ev": -0.9,
+                "home_ml_ev": -5.5,
+                "away_sp_ev": 3.9,
+                "home_sp_ev": -5.9,
+                "over_ev": 1.1,
+                "under_ev": -8.2
             }
         },
         {
@@ -822,24 +822,24 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": 135,
-                    "home": -153
+                    "away": 136,
+                    "home": -154
                 },
                 "spreads": {
-                    "away": -113,
-                    "home": 100,
-                    "away_line": 3.0,
-                    "home_line": -3.0
+                    "away": 108,
+                    "home": -121,
+                    "away_line": 2.5,
+                    "home_line": -2.5
                 },
                 "totals": {
                     "over": -118,
                     "under": 103,
                     "total": 45.0
                 },
-                "away_ml_ev": 2.8,
+                "away_ml_ev": 2.9,
                 "home_ml_ev": -7.0,
-                "away_sp_ev": 10.5,
-                "home_sp_ev": -13.3,
+                "away_sp_ev": 12.6,
+                "home_sp_ev": -16.2,
                 "over_ev": -10.2,
                 "under_ev": 8.2
             }
@@ -897,16 +897,16 @@
                     "home_line": 11.5
                 },
                 "totals": {
-                    "over": -107,
-                    "under": -107,
+                    "over": -106,
+                    "under": -108,
                     "total": 46.0
                 },
                 "away_ml_ev": -5.2,
                 "home_ml_ev": 3.6,
                 "away_sp_ev": -9.5,
                 "home_sp_ev": 3.2,
-                "over_ev": 7.2,
-                "under_ev": -10.2
+                "over_ev": 7.4,
+                "under_ev": -10.3
             }
         },
         {
@@ -962,16 +962,16 @@
                     "home_line": -2.5
                 },
                 "totals": {
-                    "over": -106,
-                    "under": -108,
-                    "total": 39.5
+                    "over": -107,
+                    "under": -107,
+                    "total": 38.5
                 },
                 "away_ml_ev": -4.9,
                 "home_ml_ev": -1.5,
                 "away_sp_ev": -6.0,
                 "home_sp_ev": -0.0,
-                "over_ev": 16.9,
-                "under_ev": -23.3
+                "over_ev": 18.0,
+                "under_ev": -24.6
             }
         },
         {
@@ -1082,8 +1082,8 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": 312,
-                    "home": -385
+                    "away": 311,
+                    "home": -384
                 },
                 "spreads": {
                     "away": -108,
@@ -1092,15 +1092,15 @@
                     "home_line": -8.5
                 },
                 "totals": {
-                    "over": -117,
-                    "under": 102,
+                    "over": -115,
+                    "under": 101,
                     "total": 47.5
                 },
-                "away_ml_ev": 2.4,
+                "away_ml_ev": 2.3,
                 "home_ml_ev": -5.3,
                 "away_sp_ev": 4.4,
                 "home_sp_ev": -10.1,
-                "over_ev": -0.3,
+                "over_ev": 0.1,
                 "under_ev": -6.6
             }
         },
@@ -1212,24 +1212,24 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": -186,
-                    "home": 162
+                    "away": -184,
+                    "home": 161
                 },
                 "spreads": {
-                    "away": -125,
-                    "home": 111,
-                    "away_line": -3.0,
-                    "home_line": 3.0
+                    "away": -102,
+                    "home": -110,
+                    "away_line": -3.5,
+                    "home_line": 3.5
                 },
                 "totals": {
                     "over": 100,
                     "under": -114,
                     "total": 53.0
                 },
-                "away_ml_ev": -2.3,
+                "away_ml_ev": -2.2,
                 "home_ml_ev": -4.4,
-                "away_sp_ev": 1.1,
-                "home_sp_ev": -3.3,
+                "away_sp_ev": 2.0,
+                "home_sp_ev": -7.4,
                 "over_ev": 9.7,
                 "under_ev": -11.8
             }
@@ -1352,16 +1352,16 @@
                     "home_line": 4.5
                 },
                 "totals": {
-                    "over": 100,
-                    "under": -112,
+                    "over": -103,
+                    "under": -109,
                     "total": 41.5
                 },
                 "away_ml_ev": -5.6,
                 "home_ml_ev": 3.4,
                 "away_sp_ev": -11.0,
                 "home_sp_ev": 6.6,
-                "over_ev": 10.9,
-                "under_ev": -15.7
+                "over_ev": 10.2,
+                "under_ev": -15.5
             }
         }
     ],
@@ -1409,26 +1409,26 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": 212,
-                    "home": -249
+                    "away": 209,
+                    "home": -238
                 },
                 "spreads": {
-                    "away": -102,
+                    "away": 100,
                     "home": -110,
                     "away_line": 4.5,
                     "home_line": -4.5
                 },
                 "totals": {
                     "over": -105,
-                    "under": -109,
+                    "under": -107,
                     "total": 43.0
                 },
-                "away_ml_ev": 0.1,
-                "home_ml_ev": -4.8,
-                "away_sp_ev": 0.2,
-                "home_sp_ev": -5.7,
-                "over_ev": 5.2,
-                "under_ev": -7.8
+                "away_ml_ev": 0.4,
+                "home_ml_ev": -4.1,
+                "away_sp_ev": 0.9,
+                "home_sp_ev": -5.4,
+                "over_ev": 5.5,
+                "under_ev": -7.3
             }
         },
         {
@@ -1539,24 +1539,24 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": -148,
-                    "home": 131
+                    "away": -149,
+                    "home": 132
                 },
                 "spreads": {
-                    "away": 106,
-                    "home": -119,
-                    "away_line": -3.0,
-                    "home_line": 3.0
+                    "away": -116,
+                    "home": 103,
+                    "away_line": -2.5,
+                    "home_line": 2.5
                 },
                 "totals": {
                     "over": -110,
                     "under": -104,
                     "total": 42.0
                 },
-                "away_ml_ev": -5.6,
-                "home_ml_ev": 0.9,
-                "away_sp_ev": -8.9,
-                "home_sp_ev": 6.0,
+                "away_ml_ev": -5.7,
+                "home_ml_ev": 1.0,
+                "away_sp_ev": -12.6,
+                "home_sp_ev": 7.7,
                 "over_ev": -5.7,
                 "under_ev": 3.2
             }
@@ -1734,26 +1734,26 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": -143,
-                    "home": 126
+                    "away": -128,
+                    "home": 113
                 },
                 "spreads": {
-                    "away": 110,
-                    "home": -124,
-                    "away_line": -3.0,
-                    "home_line": 3.0
+                    "away": -105,
+                    "home": -107,
+                    "away_line": -2.0,
+                    "home_line": 2.0
                 },
                 "totals": {
-                    "over": -113,
+                    "over": -114,
                     "under": -101,
                     "total": 42.5
                 },
-                "away_ml_ev": -1.7,
-                "home_ml_ev": -4.8,
-                "away_sp_ev": 4.6,
-                "home_sp_ev": -5.8,
-                "over_ev": 1.4,
-                "under_ev": -8.0
+                "away_ml_ev": -0.9,
+                "home_ml_ev": -5.5,
+                "away_sp_ev": 3.9,
+                "home_sp_ev": -5.9,
+                "over_ev": 1.1,
+                "under_ev": -8.2
             }
         },
         {
@@ -1799,24 +1799,24 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": 135,
-                    "home": -153
+                    "away": 136,
+                    "home": -154
                 },
                 "spreads": {
-                    "away": -113,
-                    "home": 100,
-                    "away_line": 3.0,
-                    "home_line": -3.0
+                    "away": 108,
+                    "home": -121,
+                    "away_line": 2.5,
+                    "home_line": -2.5
                 },
                 "totals": {
                     "over": -118,
                     "under": 103,
                     "total": 45.0
                 },
-                "away_ml_ev": 2.8,
+                "away_ml_ev": 2.9,
                 "home_ml_ev": -7.0,
-                "away_sp_ev": 10.5,
-                "home_sp_ev": -13.3,
+                "away_sp_ev": 12.6,
+                "home_sp_ev": -16.2,
                 "over_ev": -10.2,
                 "under_ev": 8.2
             }
@@ -1874,16 +1874,16 @@
                     "home_line": 11.5
                 },
                 "totals": {
-                    "over": -107,
-                    "under": -107,
+                    "over": -106,
+                    "under": -108,
                     "total": 46.0
                 },
                 "away_ml_ev": -5.2,
                 "home_ml_ev": 3.6,
                 "away_sp_ev": -9.5,
                 "home_sp_ev": 3.2,
-                "over_ev": 7.2,
-                "under_ev": -10.2
+                "over_ev": 7.4,
+                "under_ev": -10.3
             }
         },
         {
@@ -1939,16 +1939,16 @@
                     "home_line": -2.5
                 },
                 "totals": {
-                    "over": -106,
-                    "under": -108,
-                    "total": 39.5
+                    "over": -107,
+                    "under": -107,
+                    "total": 38.5
                 },
                 "away_ml_ev": -4.9,
                 "home_ml_ev": -1.5,
                 "away_sp_ev": -6.0,
                 "home_sp_ev": -0.0,
-                "over_ev": 16.9,
-                "under_ev": -23.3
+                "over_ev": 18.0,
+                "under_ev": -24.6
             }
         },
         {
@@ -2059,8 +2059,8 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": 312,
-                    "home": -385
+                    "away": 311,
+                    "home": -384
                 },
                 "spreads": {
                     "away": -108,
@@ -2069,15 +2069,15 @@
                     "home_line": -8.5
                 },
                 "totals": {
-                    "over": -117,
-                    "under": 102,
+                    "over": -115,
+                    "under": 101,
                     "total": 47.5
                 },
-                "away_ml_ev": 2.4,
+                "away_ml_ev": 2.3,
                 "home_ml_ev": -5.3,
                 "away_sp_ev": 4.4,
                 "home_sp_ev": -10.1,
-                "over_ev": -0.3,
+                "over_ev": 0.1,
                 "under_ev": -6.6
             }
         },
@@ -2189,24 +2189,24 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": -186,
-                    "home": 162
+                    "away": -184,
+                    "home": 161
                 },
                 "spreads": {
-                    "away": -125,
-                    "home": 111,
-                    "away_line": -3.0,
-                    "home_line": 3.0
+                    "away": -102,
+                    "home": -110,
+                    "away_line": -3.5,
+                    "home_line": 3.5
                 },
                 "totals": {
                     "over": 100,
                     "under": -114,
                     "total": 53.0
                 },
-                "away_ml_ev": -2.3,
+                "away_ml_ev": -2.2,
                 "home_ml_ev": -4.4,
-                "away_sp_ev": 1.1,
-                "home_sp_ev": -3.3,
+                "away_sp_ev": 2.0,
+                "home_sp_ev": -7.4,
                 "over_ev": 9.7,
                 "under_ev": -11.8
             }
@@ -2329,16 +2329,16 @@
                     "home_line": 4.5
                 },
                 "totals": {
-                    "over": 100,
-                    "under": -112,
+                    "over": -103,
+                    "under": -109,
                     "total": 41.5
                 },
                 "away_ml_ev": -5.6,
                 "home_ml_ev": 3.4,
                 "away_sp_ev": -11.0,
                 "home_sp_ev": 6.6,
-                "over_ev": 10.9,
-                "under_ev": -15.7
+                "over_ev": 10.2,
+                "under_ev": -15.5
             }
         }
     ]
