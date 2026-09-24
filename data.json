@@ -1,5 +1,5 @@
 {
-    "last_updated": "2026-09-24T05:33:55.240163+00:00",
+    "last_updated": "2026-09-24T10:35:12.295463+00:00",
     "slate": "2026-09-24",
     "target_date": "2026-09-24",
     "team_stats": {
@@ -832,16 +832,16 @@
                     "home_line": -3.0
                 },
                 "totals": {
-                    "over": -116,
-                    "under": 101,
+                    "over": -118,
+                    "under": 103,
                     "total": 45.0
                 },
                 "away_ml_ev": 2.8,
                 "home_ml_ev": -7.0,
                 "away_sp_ev": 10.5,
                 "home_sp_ev": -13.3,
-                "over_ev": -10.1,
-                "under_ev": 7.8
+                "over_ev": -10.2,
+                "under_ev": 8.2
             }
         },
         {
@@ -1352,16 +1352,16 @@
                     "home_line": 4.5
                 },
                 "totals": {
-                    "over": 101,
-                    "under": -113,
+                    "over": 100,
+                    "under": -112,
                     "total": 41.5
                 },
                 "away_ml_ev": -5.6,
                 "home_ml_ev": 3.4,
                 "away_sp_ev": -11.0,
                 "home_sp_ev": 6.6,
-                "over_ev": 11.2,
-                "under_ev": -15.8
+                "over_ev": 10.9,
+                "under_ev": -15.7
             }
         }
     ],
@@ -1809,16 +1809,16 @@
                     "home_line": -3.0
                 },
                 "totals": {
-                    "over": -116,
-                    "under": 101,
+                    "over": -118,
+                    "under": 103,
                     "total": 45.0
                 },
                 "away_ml_ev": 2.8,
                 "home_ml_ev": -7.0,
                 "away_sp_ev": 10.5,
                 "home_sp_ev": -13.3,
-                "over_ev": -10.1,
-                "under_ev": 7.8
+                "over_ev": -10.2,
+                "under_ev": 8.2
             }
         },
         {
@@ -2329,16 +2329,16 @@
                     "home_line": 4.5
                 },
                 "totals": {
-                    "over": 101,
-                    "under": -113,
+                    "over": 100,
+                    "under": -112,
                     "total": 41.5
                 },
                 "away_ml_ev": -5.6,
                 "home_ml_ev": 3.4,
                 "away_sp_ev": -11.0,
                 "home_sp_ev": 6.6,
-                "over_ev": 11.2,
-                "under_ev": -15.8
+                "over_ev": 10.9,
+                "under_ev": -15.7
             }
         }
     ]
