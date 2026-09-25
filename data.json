@@ -1,5 +1,5 @@
 {
-    "last_updated": "2026-09-25T05:40:07.710424+00:00",
+    "last_updated": "2026-09-25T10:38:46.277145+00:00",
     "slate": "2026-09-27",
     "target_date": "2026-09-27",
     "team_stats": {
@@ -1157,16 +1157,16 @@
                     "home_line": 3.5
                 },
                 "totals": {
-                    "over": -108,
-                    "under": -106,
+                    "over": -109,
+                    "under": -105,
                     "total": 53.0
                 },
                 "away_ml_ev": -2.5,
                 "home_ml_ev": -4.2,
                 "away_sp_ev": 2.1,
                 "home_sp_ev": -7.5,
-                "over_ev": 7.3,
-                "under_ev": -10.5
+                "over_ev": 7.1,
+                "under_ev": -10.4
             }
         },
         {
@@ -2069,16 +2069,16 @@
                     "home_line": 3.5
                 },
                 "totals": {
-                    "over": -108,
-                    "under": -106,
+                    "over": -109,
+                    "under": -105,
                     "total": 53.0
                 },
                 "away_ml_ev": -2.5,
                 "home_ml_ev": -4.2,
                 "away_sp_ev": 2.1,
                 "home_sp_ev": -7.5,
-                "over_ev": 7.3,
-                "under_ev": -10.5
+                "over_ev": 7.1,
+                "under_ev": -10.4
             }
         },
         {
