@@ -1,5 +1,5 @@
 {
-    "last_updated": "2026-09-24T22:45:43.629233+00:00",
+    "last_updated": "2026-09-25T00:57:30.067434+00:00",
     "slate": "2026-09-24",
     "target_date": "2026-09-24",
     "team_stats": {
@@ -394,7 +394,7 @@
             "home_team": "GB",
             "date": "2026-09-24",
             "target_date": "2026-09-24",
-            "commence_time": "2026-09-25T00:15:00Z",
+            "commence_time": "2026-09-25T00:15:29Z",
             "away_stats": {
                 "primary_qb": "C.Rush",
                 "off_epa_per_play": -0.03103368347911349,
@@ -432,26 +432,26 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": 210,
-                    "home": -239
+                    "away": 438,
+                    "home": -565
                 },
                 "spreads": {
-                    "away": 100,
-                    "home": -110,
-                    "away_line": 4.5,
-                    "home_line": -4.5
+                    "away": 109,
+                    "home": -127,
+                    "away_line": 9.0,
+                    "home_line": -9.0
                 },
                 "totals": {
-                    "over": -110,
-                    "under": -102,
-                    "total": 43.0
+                    "over": -131,
+                    "under": 108,
+                    "total": 42.5
                 },
-                "away_ml_ev": 0.5,
-                "home_ml_ev": -4.1,
-                "away_sp_ev": 0.9,
-                "home_sp_ev": -5.4,
-                "over_ev": 4.7,
-                "under_ev": -6.6
+                "away_ml_ev": 13.0,
+                "home_ml_ev": -7.0,
+                "away_sp_ev": 15.5,
+                "home_sp_ev": -16.4,
+                "over_ev": -0.5,
+                "under_ev": -9.3
             }
         },
         {
@@ -1017,26 +1017,26 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": -352,
-                    "home": 288
+                    "away": -359,
+                    "home": 294
                 },
                 "spreads": {
-                    "away": -105,
-                    "home": -107,
+                    "away": -108,
+                    "home": -104,
                     "away_line": -7.5,
                     "home_line": 7.5
                 },
                 "totals": {
-                    "over": -102,
-                    "under": -113,
+                    "over": -106,
+                    "under": -108,
                     "total": 40.5
                 },
                 "away_ml_ev": -1.6,
-                "home_ml_ev": -9.3,
-                "away_sp_ev": 10.4,
-                "home_sp_ev": -16.0,
-                "over_ev": 11.5,
-                "under_ev": -17.6
+                "home_ml_ev": -9.1,
+                "away_sp_ev": 9.7,
+                "home_sp_ev": -15.6,
+                "over_ev": 10.7,
+                "under_ev": -17.1
             }
         },
         {
@@ -1371,7 +1371,7 @@
             "home_team": "GB",
             "date": "2026-09-24",
             "target_date": "2026-09-24",
-            "commence_time": "2026-09-25T00:15:00Z",
+            "commence_time": "2026-09-25T00:15:29Z",
             "away_stats": {
                 "primary_qb": "C.Rush",
                 "off_epa_per_play": -0.03103368347911349,
@@ -1409,26 +1409,26 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": 210,
-                    "home": -239
+                    "away": 438,
+                    "home": -565
                 },
                 "spreads": {
-                    "away": 100,
-                    "home": -110,
-                    "away_line": 4.5,
-                    "home_line": -4.5
+                    "away": 109,
+                    "home": -127,
+                    "away_line": 9.0,
+                    "home_line": -9.0
                 },
                 "totals": {
-                    "over": -110,
-                    "under": -102,
-                    "total": 43.0
+                    "over": -131,
+                    "under": 108,
+                    "total": 42.5
                 },
-                "away_ml_ev": 0.5,
-                "home_ml_ev": -4.1,
-                "away_sp_ev": 0.9,
-                "home_sp_ev": -5.4,
-                "over_ev": 4.7,
-                "under_ev": -6.6
+                "away_ml_ev": 13.0,
+                "home_ml_ev": -7.0,
+                "away_sp_ev": 15.5,
+                "home_sp_ev": -16.4,
+                "over_ev": -0.5,
+                "under_ev": -9.3
             }
         },
         {
@@ -1994,26 +1994,26 @@
             },
             "market_data": {
                 "h2h": {
-                    "away": -352,
-                    "home": 288
+                    "away": -359,
+                    "home": 294
                 },
                 "spreads": {
-                    "away": -105,
-                    "home": -107,
+                    "away": -108,
+                    "home": -104,
                     "away_line": -7.5,
                     "home_line": 7.5
                 },
                 "totals": {
-                    "over": -102,
-                    "under": -113,
+                    "over": -106,
+                    "under": -108,
                     "total": 40.5
                 },
                 "away_ml_ev": -1.6,
-                "home_ml_ev": -9.3,
-                "away_sp_ev": 10.4,
-                "home_sp_ev": -16.0,
-                "over_ev": 11.5,
-                "under_ev": -17.6
+                "home_ml_ev": -9.1,
+                "away_sp_ev": 9.7,
+                "home_sp_ev": -15.6,
+                "over_ev": 10.7,
+                "under_ev": -17.1
             }
         },
         {
